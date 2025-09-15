@@ -36,7 +36,7 @@ func ReverseLookup(ipAddress string) string {
 	if len(ip_data) <1{
 		return "No PTR Found"
 	}else{
-		return fmt.Sprintf("IP Data", ip_data)
+		return fmt.Sprintf("IP Data\n", ip_data)
 	}
 	
 }
@@ -44,7 +44,7 @@ func ReverseLookup(ipAddress string) string {
 func CnameCheck(domain string) string {
 	cName, err := net.LookupCNAME(domain)
 	if err != nil {
-		fmt.Printf("Domain Error %s", err)
+		fmt.Printf("Domain Error %s\n", err)
 		os.Exit(1)
 	}
 
@@ -54,7 +54,7 @@ func CnameCheck(domain string) string {
 func TxtCheck(domain string) []string {
 	txtData, err := net.LookupTXT(domain)
 	if err != nil {
-		fmt.Printf("TXT Record not found %v", err)
+		fmt.Printf("TXT Record not found %v\n", err)
 	}
 	return txtData
 }
