@@ -28,10 +28,17 @@ func ReverseLookup(ipAddress string) string {
 		fmt.Fprintf(os.Stderr, "Error:  %s\n", err)
 
 	}
+	
 	for _, ip := range ip_data {
 		return ip
 	}
-	return fmt.Sprintf("IP Data", ip_data)
+
+	if len(ip_data) <1{
+		return "No PTR Found"
+	}else{
+		return fmt.Sprintf("IP Data", ip_data)
+	}
+	
 }
 
 func CnameCheck(domain string) string {
