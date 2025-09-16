@@ -13,12 +13,13 @@ import (
 )
 
 type Dominfo struct {
-	IP  string
-	PTR string
-	TXT []string
-	MX  []dns_checks.MxStats
-	NS  []string
-	SSL error
+	IP     string
+	PTR    string
+	TXT    []string
+	MX     []dns_checks.MxStats
+	NS     []string
+	SSL    error
+	IPinfo string
 }
 
 /*
@@ -40,11 +41,12 @@ func main() {
 
 	domain := os.Args[1]
 	domainData = Dominfo{
-		IP:  dns_checks.DomainIP(domain),
-		PTR: dns_checks.ReverseLookup(dns_checks.DomainIP(domain)),
-		TXT: dns_checks.TxtCheck(domain),
-		MX:  dns_checks.MxLookup(domain),
-		NS:  dns_checks.NsLookup(domain),
+		IP:     dns_checks.DomainIP(domain),
+		PTR:    dns_checks.ReverseLookup(dns_checks.DomainIP(domain)),
+		TXT:    dns_checks.TxtCheck(domain),
+		MX:     dns_checks.MxLookup(domain),
+		NS:     dns_checks.NsLookup(domain),
+		IPinfo: dns_checks.IpInfo(dns_checks.DomainIP(domain)),
 	}
 
 	startTime := time.Now()
@@ -52,6 +54,8 @@ func main() {
 	t.Println(seParator)
 	d.Println("IP: ", domainData.IP)
 	fmt.Println("__________________")
+	d.Println("IP Info Data: ")
+	t.Printf("%s\n", domainData.IPinfo)
 	d.Printf("NS Records:\n%s\n", strings.Join(domainData.NS, "\n"))
 	fmt.Println("__________________")
 	for i, mx := range domainData.MX {

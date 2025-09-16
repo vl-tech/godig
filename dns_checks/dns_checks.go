@@ -3,11 +3,27 @@ package dns_checks
 import (
 	"crypto/tls"
 	"fmt"
+	"io"
 	"net"
+	"net/http"
 	"os"
 	"time"
 )
 
+func IpInfo(ip string) string {
+	ipinfoBase := "https://ipinfo.io/"
+	url := ipinfoBase + ip
+	fmt.Println(ip)
+	resp, err := http.Get(url)
+	if err != nil {
+		fmt.Println(err)
+	}
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return string(body)
+}
 func DomainIP(domain string) string {
 	ips, err := net.LookupIP(domain)
 
@@ -72,7 +88,7 @@ func NsLookup(domain string) []string {
 }
 
 type MxStats struct {
-	Host     string
+	Host string
 	Prio uint16
 }
 
@@ -84,7 +100,7 @@ func MxLookup(domain string) []MxStats {
 	mxList := make([]MxStats, 0, len(mxData))
 	for _, mx := range mxData {
 		mxList = append(mxList, MxStats{
-			Host:     mx.Host,
+			Host: mx.Host,
 			Prio: mx.Pref,
 		})
 	}
