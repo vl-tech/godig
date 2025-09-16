@@ -76,7 +76,7 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println("__________________")
-	d.Println("Checking Server Defautl ports")
+	d.Println("Checking Server Default ports")
 	portStatus := dns_checks.CheckOpenPorts(dns_checks.DomainIP(domain))
 	for port, status := range portStatus {
 		t.Printf("%d\t%s\n", port, status)

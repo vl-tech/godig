@@ -150,8 +150,8 @@ func CheckOpenPorts(ip string) map[int]string {
 		address := fmt.Sprintf("%s:%d", ip, port)
 		conn, err := net.DialTimeout("tcp", address, timeout)
 		if err != nil {
-			// t.Fprintf(os.Stderr, "Port\t%d is closed:\n", port)
-			portStatuses[port] = "Closed"
+			// fmt.Fprintf(os.Stderr, "Port\t%d is closed:\n", port)
+			portStatuses[port] = "Closed/Filtered"
 			continue
 		}
 		// t.Printf("Port\t%d is open\n", port)
