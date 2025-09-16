@@ -71,18 +71,25 @@ func NsLookup(domain string) []string {
 	return listNS
 }
 
-func MxLookup(domain string) []any {
-	mxInfo := []any{}
+type MxStats struct {
+	Host     string
+	Prio uint16
+}
+
+func MxLookup(domain string) []MxStats {
 	mxData, err := net.LookupMX(domain)
 	if err != nil {
 		fmt.Println("MX Error", err)
 	}
+	mxList := make([]MxStats, 0, len(mxData))
 	for _, mx := range mxData {
-		mxInfo = append(mxInfo, mx.Host, mx.Pref)
+		mxList = append(mxList, MxStats{
+			Host:     mx.Host,
+			Prio: mx.Pref,
+		})
 	}
-	return mxInfo
+	return mxList
 }
-
 func VerifySSL(domain string) error {
 	sslDomain := domain + ":443"
 
