@@ -2,6 +2,10 @@
  *Multi platform script for DNS checks.*
  *Checks A,NS,MX,TXT, and SSL validity* 
  *Accepts single parameter the domain name*
+<<<<<<< HEAD
 ## It has complied executables for Linux/MacOS and Windows.
 - dig.exe Is the Windows execution script version
 - domain_analyzer is the Linux/MacOS binary
+=======
+## It has complied version for linux/mac and windows.
+>>>>>>> 34b2e3f (golang server)
