@@ -75,7 +75,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
+	fmt.Println("__________________")
+	d.Println("Checking Server Defautl ports")
+	portStatus := dns_checks.CheckOpenPorts(dns_checks.DomainIP(domain))
+	for port, status := range portStatus {
+		t.Printf("%d\t%s\n", port, status)
+	}
 	elapsedTime := time.Since(startTime)
 	t.Printf("Script elapsed time is: %v\n", elapsedTime)
 
