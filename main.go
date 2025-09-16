@@ -2,6 +2,7 @@ package main
 
 import (
 	"domain_analyzer/dns_checks"
+	"strings"
 
 	"fmt"
 	"log"
@@ -15,7 +16,7 @@ type Dominfo struct {
 	IP  string
 	PTR string
 	TXT []string
-	MX  []any
+	MX  []dns_checks.MxStats
 	NS  []string
 	SSL error
 }
@@ -51,9 +52,12 @@ func main() {
 	t.Println(seParator)
 	d.Println("IP: ", domainData.IP)
 	fmt.Println("__________________")
-	d.Println("NS: ", domainData.NS)
+	d.Printf("NS Records:\n%s\n", strings.Join(domainData.NS, "\n"))
 	fmt.Println("__________________")
-	d.Println("MX: ", domainData.MX)
+	for i, mx := range domainData.MX {
+		d.Printf("%d. Host: %s Priority: %d\n", i+1, mx.Host, mx.Prio)
+	}
+
 	fmt.Println("__________________")
 	d.Println("PTR: ", domainData.PTR)
 
