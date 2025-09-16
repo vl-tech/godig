@@ -27,28 +27,28 @@ func ReverseLookup(ipAddress string) string {
 		fmt.Fprintf(os.Stderr, "Error:  %s\n", err)
 
 	}
-	
+
 	for _, ip := range ip_data {
 		return ip
 	}
 
-	if len(ip_data) <1{
+	if len(ip_data) < 1 {
 		return "No PTR Found"
-	}else{
-		return fmt.Sprintf("IP Data\n", ip_data)
-	}
-	
-}
-
-func CnameCheck(domain string) string {
-	cName, err := net.LookupCNAME(domain)
-	if err != nil {
-		fmt.Printf("Domain Error %s\n", err)
-		os.Exit(1)
+	} else {
+		return fmt.Sprintf("IP Data%s\n", ip_data)
 	}
 
-	return cName
 }
+
+// func CnameCheck(domain string) string {
+// 	cName, err := net.LookupCNAME(domain)
+// 	if err != nil {
+// 		fmt.Printf("Domain Error %s\n", err)
+// 		os.Exit(1)
+// 	}
+
+// 	return cName
+// }
 
 func TxtCheck(domain string) []string {
 	txtData, err := net.LookupTXT(domain)
@@ -58,20 +58,29 @@ func TxtCheck(domain string) []string {
 	return txtData
 }
 
-func NsLookup(domain string) []*net.NS {
+func NsLookup(domain string) []string {
+
+	listNS := []string{}
 	nsData, err := net.LookupNS(domain)
 	if err != nil {
 		fmt.Printf("NS Error %s\n", err)
 	}
-	return nsData
+	for _, nsRecord := range nsData {
+		listNS = append(listNS, nsRecord.Host)
+	}
+	return listNS
 }
 
-func MxLookup(domain string) []*net.MX {
+func MxLookup(domain string) []any {
+	mxInfo := []any{}
 	mxData, err := net.LookupMX(domain)
 	if err != nil {
 		fmt.Println("MX Error", err)
 	}
-	return mxData
+	for _, mx := range mxData {
+		mxInfo = append(mxInfo, mx.Host, mx.Pref)
+	}
+	return mxInfo
 }
 
 func VerifySSL(domain string) error {
@@ -108,5 +117,3 @@ func VerifySSL(domain string) error {
 
 	return nil
 }
-
-
