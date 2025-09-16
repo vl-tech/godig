@@ -3,10 +3,6 @@ package dns_checks
 import (
 	"crypto/tls"
 	"fmt"
-<<<<<<< HEAD
-
-=======
->>>>>>> 34b2e3f (golang server)
 	"net"
 	"os"
 	"time"
@@ -31,7 +27,6 @@ func ReverseLookup(ipAddress string) string {
 		fmt.Fprintf(os.Stderr, "Error:  %s\n", err)
 
 	}
-<<<<<<< HEAD
 	
 	for _, ip := range ip_data {
 		return ip
@@ -43,19 +38,6 @@ func ReverseLookup(ipAddress string) string {
 		return fmt.Sprintf("IP Data\n", ip_data)
 	}
 	
-=======
-	for _, ip := range ip_data {
-		return ip
-
-	}
-
-	if len(ip_data) < 1 {
-		return "No PTR Found"
-	} else {
-		return fmt.Sprintf("IP Data%s\n", ip_data)
-	}
-
->>>>>>> 34b2e3f (golang server)
 }
 
 func CnameCheck(domain string) string {
@@ -127,25 +109,4 @@ func VerifySSL(domain string) error {
 	return nil
 }
 
-<<<<<<< HEAD
-// func VerifySSL(domain string) {
-// 	sslDomain := domain + ":443"
-// 	dialer := &net.Dialer{Timeout: 5 * time.Second}
 
-// 	conn, err := tls.Dial("tcp", sslDomain, nil)
-// 	if err != nil {
-// 		log.Fatalf("SSL Error: %s\n", err.Error())
-// 		conn.Close()
-// 	}
-// 	err = conn.VerifyHostname(domain)
-// 	if err != nil {
-// 		log.Fatalf("%s\n", err.Error())
-// 		conn.Close()
-// 	}
-// 	expiry := conn.ConnectionState().PeerCertificates[0].NotAfter
-
-// 	fmt.Printf("Issuer: %s\nExpiry: %v\n", conn.ConnectionState().PeerCertificates[0].Issuer, expiry.Format(time.RFC850))
-// 	conn.Close()
-// }
-=======
->>>>>>> 34b2e3f (golang server)

@@ -3,17 +3,10 @@ package main
 import (
 	"domain_analyzer/dns_checks"
 	"fmt"
-<<<<<<< HEAD
 	"log"
 	"os"
 	"time"
 	"github.com/fatih/color"
-=======
-	"github.com/fatih/color"
-	"log"
-	"os"
-	"time"
->>>>>>> 34b2e3f (golang server)
 )
 
 func main() {
@@ -36,11 +29,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "ReverSeLookup Error")
 		os.Exit(1)
 	}
-<<<<<<< HEAD
 	d.Printf("%s\n", reverseData)
-=======
-	d.Println(reverseData)
->>>>>>> 34b2e3f (golang server)
 	s.Printf("%s\n", seParator)
 
 	d.Printf("CNAME: %s\n", dns_checks.CnameCheck(domain))
