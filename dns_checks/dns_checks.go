@@ -3,7 +3,6 @@ package dns_checks
 import (
 	"crypto/tls"
 	"fmt"
-
 	"net"
 	"os"
 	"time"
@@ -110,22 +109,4 @@ func VerifySSL(domain string) error {
 	return nil
 }
 
-// func VerifySSL(domain string) {
-// 	sslDomain := domain + ":443"
-// 	dialer := &net.Dialer{Timeout: 5 * time.Second}
 
-// 	conn, err := tls.Dial("tcp", sslDomain, nil)
-// 	if err != nil {
-// 		log.Fatalf("SSL Error: %s\n", err.Error())
-// 		conn.Close()
-// 	}
-// 	err = conn.VerifyHostname(domain)
-// 	if err != nil {
-// 		log.Fatalf("%s\n", err.Error())
-// 		conn.Close()
-// 	}
-// 	expiry := conn.ConnectionState().PeerCertificates[0].NotAfter
-
-// 	fmt.Printf("Issuer: %s\nExpiry: %v\n", conn.ConnectionState().PeerCertificates[0].Issuer, expiry.Format(time.RFC850))
-// 	conn.Close()
-// }
