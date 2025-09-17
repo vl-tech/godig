@@ -8,12 +8,12 @@ import (
 	"net/http"
 	"os"
 	"time"
+	"github.com/fatih/color"
 )
 
 func IpInfo(ip string) string {
 	ipinfoBase := "https://ipinfo.io/"
 	url := ipinfoBase + ip
-	fmt.Println(ip)
 	resp, err := http.Get(url)
 	if err != nil {
 		fmt.Println(err)
@@ -38,11 +38,11 @@ func DomainIP(domain string) string {
 
 func ReverseLookup(ipAddress string) string {
 
-	ip_data, err := net.LookupAddr(ipAddress)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error:  %s\n", err)
+	ip_data, _ := net.LookupAddr(ipAddress)
+	// if err != nil {
+	// 	fmt.Fprintf(os.Stderr, "Error:  %s\n", err)
 
-	}
+	// }
 
 	for _, ip := range ip_data {
 		return ip
@@ -56,15 +56,24 @@ func ReverseLookup(ipAddress string) string {
 
 }
 
-// func CnameCheck(domain string) string {
-// 	cName, err := net.LookupCNAME(domain)
-// 	if err != nil {
-// 		fmt.Printf("Domain Error %s\n", err)
-// 		os.Exit(1)
-// 	}
+func CnameCheck(domain string) [][]string {
+	domPrefix := []string{"www", "cpanel", "whm", "mail"}
+	cnameList := []string{}
+	errorList := []string{}
+	mainLis := [][]string{}
+	for _, prefix := range domPrefix {
+		fullDomain := prefix + "." + domain
+		cName, err := net.LookupCNAME(fullDomain)
+		if err != nil {
+			// fmt.Printf("Domain Error %s\n", err)
+			errorList = append(errorList, err.Error())
+		}
+		cnameList = append(cnameList, cName)
 
-// 	return cName
-// }
+	}
+	mainLis = append(mainLis, cnameList, errorList)
+	return mainLis
+}
 
 func TxtCheck(domain string) []string {
 	txtData, err := net.LookupTXT(domain)
@@ -107,6 +116,7 @@ func MxLookup(domain string) []MxStats {
 	return mxList
 }
 func VerifySSL(domain string) error {
+	y := color.New(color.FgYellow, color.Bold)
 	sslDomain := domain + ":443"
 
 	// Create a dialer with a timeout
@@ -136,7 +146,7 @@ func VerifySSL(domain string) error {
 	}
 
 	cert := state.PeerCertificates[0]
-	fmt.Printf("Issuer: %s\nExpiry: %v\n", cert.Issuer, cert.NotAfter.Format(time.RFC850))
+	y.Printf("Issuer: %s\nExpiry: %v\n", cert.Issuer, cert.NotAfter.Format(time.RFC850))
 
 	return nil
 }
@@ -160,4 +170,16 @@ func CheckOpenPorts(ip string) map[int]string {
 
 	}
 	return portStatuses
+}
+
+func GetRealIp(cNameDomain string) string {
+	ips, err := net.LookupIP(cNameDomain)
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to parse data %s\n", err)
+	}
+	for _, ip := range ips {
+		return ip.String()
+	}
+	return ""
 }
