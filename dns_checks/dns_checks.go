@@ -25,10 +25,12 @@ func IpInfo(ip string) string {
 	return string(body)
 }
 func DomainIP(domain string) string {
+	e := color.New(color.FgRed, color.Bold)
 	ips, err := net.LookupIP(domain)
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to parse data %s\n", err)
+		e.Fprintf(os.Stderr, "Unable to parse data %s\n", err)
+		os.Exit(1)
 	}
 	for _, ip := range ips {
 		return ip.String()
