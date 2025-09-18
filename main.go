@@ -49,39 +49,51 @@ func main() {
 	}
 
 	startTime := time.Now()
+	fmt.Println()
 	seParator := "\t\t\t\t************* DNS INFO *************"
 	e.Println(seParator)
 	fmt.Println()
 	d.Println("IP: ", domainData.IP)
 	y.Println("__________________")
+	// IP Info data
 	t.Println("IP Info Data: ")
 	fmt.Println()
 	d.Printf("%s\n", domainData.IPinfo)
 	y.Println("__________________")
+	// NS Records
 	t.Println("NS Records")
 	fmt.Println()
 	y.Printf("%s\n", strings.Join(domainData.NS, "\n"))
 	y.Println("__________________")
+	// MX Records
+	t.Println("MX Records")
+	fmt.Println()
 	for i, mx := range domainData.MX {
 		d.Printf("%d. Host: %s Priority: %d\n", i+1, mx.Host, mx.Prio)
 	}
 
+	//PTR Records
 	y.Println("__________________")
 	d.Println("PTR: ", domainData.PTR)
 
+	// TXT Records
 	y.Println("__________________")
 	t.Println("TXT Records")
 	fmt.Println()
 	for _, txt := range domainData.TXT {
+
 		y.Printf("Record --> %s\n", txt)
+
 	}
+
+	// SSL Check
 	y.Println("__________________")
 	t.Println("SSL Check")
 	err := dns_checks.VerifySSL(domain)
 	if err != nil {
 		e.Println(err)
 	}
-
+	// CNAME Check
 	y.Println("__________________")
 	t.Println("Checking list of valid CNAME records")
 	for _, cn := range domainData.cNameList[0] {
@@ -116,34 +128,32 @@ func main() {
 	} else {
 		t.Println("Domain is not using Cloudflare")
 	}
+
+	// Checking for Open Ports
 	y.Println("__________________")
 	var choice string
 	t.Println("Final Stage of the script is Checking for open ports")
 	t.Println("Please confirm yes or no - y/n ")
 	fmt.Scanf("%s", &choice)
-	if choice == "y" {
+
+	switch choice {
+	case "y":
 		fmt.Println("__________________")
 		t.Println("Checking Server Default ports")
 		portStatus := dns_checks.CheckOpenPorts(dns_checks.DomainIP(domain))
 		for port, status := range portStatus {
 			y.Printf("%d\t%s\n", port, status)
 		}
-	} else if choice == "n" {
+	case "n":
 		d.Println("Terminating script")
 		d.Println("Bye Bye")
 		os.Exit(0)
-	} else {
+	default:
 		d.Println("Nothing was selected or input was invalid")
 		d.Println("Terminating script")
 		d.Println("Bye Bye")
 	}
-
-	// fmt.Println("__________________")
-	// d.Println("Checking Server Default ports")
-	// portStatus := dns_checks.CheckOpenPorts(dns_checks.DomainIP(domain))
-	// for port, status := range portStatus {
-	// 	t.Printf("%d\t%s\n", port, status)
-	// }
+	
 	elapsedTime := time.Since(startTime)
 	t.Printf("Script elapsed time is: %v\n", elapsedTime)
 

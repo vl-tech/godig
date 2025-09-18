@@ -77,10 +77,10 @@ func CnameCheck(domain string) [][]string {
 }
 
 func TxtCheck(domain string) []string {
-	txtData, err := net.LookupTXT(domain)
-	if err != nil {
-		fmt.Printf("TXT Record not found %v\n", err)
-	}
+	txtData, _ := net.LookupTXT(domain)
+	// if err != nil {
+	// 	fmt.Printf("TXT Record not found %v\n", err)
+	// }
 	return txtData
 }
 
