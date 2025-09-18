@@ -58,7 +58,7 @@ func ReverseLookup(ipAddress string) string {
 }
 
 func CnameCheck(domain string) [][]string {
-	domPrefix := []string{"www", "cpanel", "whm", "mail"}
+	domPrefix := []string{"mail", "cpanel", "whm", "www","webmail"}
 	cnameList := []string{}
 	errorList := []string{}
 	mainLis := [][]string{}

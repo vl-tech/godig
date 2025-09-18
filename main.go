@@ -13,10 +13,12 @@ package main
 import (
 	"domain_analyzer/dns_checks"
 	"fmt"
-	"github.com/fatih/color"
+	"net/url"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/fatih/color"
 )
 
 type Dominfo struct {
@@ -37,7 +39,9 @@ func main() {
 	t := color.New(color.BgBlack, color.FgHiMagenta, color.Italic, color.Bold)
 	e := color.New(color.BgHiMagenta, color.FgYellow, color.Bold)
 	y := color.New(color.FgYellow, color.Bold)
-	domain := os.Args[1]
+	input := os.Args[1]
+	u, _ := url.Parse(input)
+	domain := u.Host
 	domainData = Dominfo{
 		IP:        dns_checks.DomainIP(domain),
 		PTR:       dns_checks.ReverseLookup(dns_checks.DomainIP(domain)),
@@ -109,6 +113,7 @@ func main() {
 
 	// Cloudfalre Check and obtain real IP
 	y.Println("__________________")
+
 	prefixedDomain := "mail" + "." + domain
 	prefixedDomainIP := dns_checks.DomainIP(prefixedDomain)
 	if strings.Contains(domainData.NS[0], "cloudflare.com") {
@@ -153,7 +158,7 @@ func main() {
 		d.Println("Terminating script")
 		d.Println("Bye Bye")
 	}
-	
+
 	elapsedTime := time.Since(startTime)
 	t.Printf("Script elapsed time is: %v\n", elapsedTime)
 
