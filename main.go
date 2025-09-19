@@ -13,7 +13,6 @@ package main
 import (
 	"domain_analyzer/dns_checks"
 	"fmt"
-	"net/url"
 	"os"
 	"strings"
 	"time"
@@ -39,9 +38,7 @@ func main() {
 	t := color.New(color.BgBlack, color.FgHiMagenta, color.Italic, color.Bold)
 	e := color.New(color.BgHiMagenta, color.FgYellow, color.Bold)
 	y := color.New(color.FgYellow, color.Bold)
-	input := os.Args[1]
-	u, _ := url.Parse(input)
-	domain := u.Host
+	domain := os.Args[1]
 	domainData = Dominfo{
 		IP:        dns_checks.DomainIP(domain),
 		PTR:       dns_checks.ReverseLookup(dns_checks.DomainIP(domain)),
@@ -108,7 +105,7 @@ func main() {
 	t.Println("Checking list of invalid CNAME errors")
 	for _, cn := range domainData.cNameList[1] {
 		y.Println(cn)
-	}
+	};;
 	y.Println("__________________")
 
 	// Cloudfalre Check and obtain real IP
