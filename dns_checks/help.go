@@ -24,7 +24,7 @@ func HelpFunc(input string) {
 	t.Println("Example: <domain.com>, <example.com> ")
 	y.Println("-h --help or empty input to display this help message.")
 	y.Println("==========================================")
-	y.Println("Available Functions\t\n")
+	y.Println("Available Functions\t")
 	for _, fn := range functionsList {
 		y.Println(fn)
 	}

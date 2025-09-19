@@ -5,6 +5,7 @@ go 1.24.5
 require (
 	github.com/fatih/color v1.18.0
 	github.com/openrdap/rdap v0.9.1
+	golang.org/x/net v0.10.0
 )
 
 require (

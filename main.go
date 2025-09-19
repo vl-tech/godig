@@ -148,14 +148,9 @@ func main() {
 	} else {
 		t.Println("Domain is not using Cloudflare")
 	}
-	// Rdap Info
-	// y.Println("__________________")
-	// t.Println("Rdap Info")
-	// fmt.Println()
-	// rdapInfo := dns_checks.RdapInfo(domain)
-	// e.Println(rdapInfo)
-	// y.Println("__________________")
-
+	y.Println("__________________")
+	t.Println("cPanel License check")
+	dns_checks.CheckLicense(domainData.IP)
 	// Checking for Open Ports
 	y.Println("__________________")
 	var choice string
