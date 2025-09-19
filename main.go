@@ -105,7 +105,7 @@ func main() {
 	t.Println("Checking list of invalid CNAME errors")
 	for _, cn := range domainData.cNameList[1] {
 		y.Println(cn)
-	};;
+	}
 	y.Println("__________________")
 
 	// Cloudfalre Check and obtain real IP
@@ -130,6 +130,13 @@ func main() {
 	} else {
 		t.Println("Domain is not using Cloudflare")
 	}
+	// Rdap Info
+	// y.Println("__________________")
+	// t.Println("Rdap Info")
+	// fmt.Println()
+	// rdapInfo := dns_checks.RdapInfo(domain)
+	// e.Println(rdapInfo)
+	// y.Println("__________________")
 
 	// Checking for Open Ports
 	y.Println("__________________")
@@ -155,7 +162,6 @@ func main() {
 		d.Println("Terminating script")
 		d.Println("Bye Bye")
 	}
-
 	elapsedTime := time.Since(startTime)
 	t.Printf("Script elapsed time is: %v\n", elapsedTime)
 
