@@ -143,14 +143,25 @@ func main() {
 			t.Println("Real IP Is: ")
 			y.Println("__________________")
 			y.Println(dns_checks.DomainIP(prefixedDomain))
+			// cPanel/WHM License check
+			y.Println("__________________")
+			t.Println("cPanel License check")
+			dns_checks.CheckLicense(dns_checks.DomainIP(prefixedDomain))
 		}
 
 	} else {
 		t.Println("Domain is not using Cloudflare")
+		// cPanel/WHM License check
+		y.Println("__________________")
+		t.Println("cPanel License check")
+		dns_checks.CheckLicense(dns_checks.DomainIP(prefixedDomain))
+
 	}
-	y.Println("__________________")
-	t.Println("cPanel License check")
-	dns_checks.CheckLicense(domainData.IP)
+
+	// cPanel/WHM License check
+	// y.Println("__________________")
+	// t.Println("cPanel License check")
+	// dns_checks.CheckLicense(dns_checks.DomainIP(prefixedDomain))
 	// Checking for Open Ports
 	y.Println("__________________")
 	var choice string
