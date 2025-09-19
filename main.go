@@ -32,13 +32,23 @@ type Dominfo struct {
 }
 
 var domainData Dominfo
+var domain string
 
 func main() {
+
+	if len(os.Args) < 2 {
+		dns_checks.HelpFunc("")
+		os.Exit(0)
+	} else if len(os.Args) == 2 && os.Args[1] == "--help" || os.Args[1] == "-h" || os.Args[1] == "--h" {
+		dns_checks.HelpFunc(os.Args[1])
+		os.Exit(0)
+	} else {
+		domain = os.Args[1]
+	}
 	d := color.New(color.FgHiYellow, color.Bold)
 	t := color.New(color.BgBlack, color.FgHiMagenta, color.Italic, color.Bold)
 	e := color.New(color.BgHiMagenta, color.FgYellow, color.Bold)
 	y := color.New(color.FgYellow, color.Bold)
-	domain := os.Args[1]
 	domainData = Dominfo{
 		IP:        dns_checks.DomainIP(domain),
 		PTR:       dns_checks.ReverseLookup(dns_checks.DomainIP(domain)),
@@ -97,6 +107,7 @@ func main() {
 	// CNAME Check
 	y.Println("__________________")
 	t.Println("Checking list of valid CNAME records")
+
 	for _, cn := range domainData.cNameList[0] {
 		y.Println(cn)
 	}
@@ -110,10 +121,17 @@ func main() {
 
 	// Cloudfalre Check and obtain real IP
 	y.Println("__________________")
-
-	prefixedDomain := "mail" + "." + domain
-	prefixedDomainIP := dns_checks.DomainIP(prefixedDomain)
-	if strings.Contains(domainData.NS[0], "cloudflare.com") {
+	var prefixedDomain string
+	var prefixedDomainIP string
+	if strings.Contains(domain, "mail.") {
+		prefixedDomainIP = dns_checks.DomainIP(domain)
+	} else {
+		prefixedDomain = "mail" + "." + domain
+		prefixedDomainIP = dns_checks.DomainIP(prefixedDomain)
+	}
+	if len(domainData.NS) < 1 {
+		e.Println("Domain has no NS records")
+	} else if strings.Contains(domainData.NS[0], "cloudflare.com") {
 		t.Println("Domain is using Cloudfalre")
 		t.Println("Trying to obtain real IP from mail cName")
 
