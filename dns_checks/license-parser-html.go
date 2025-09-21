@@ -1,8 +1,10 @@
 package dns_checks
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/fatih/color"
+	"html"
 	"io"
 	"net/http"
 	"regexp"
@@ -11,27 +13,57 @@ import (
 
 func CheckLicense(ip string) {
 	y := color.New(color.FgYellow, color.Bold)
-	licensUrl := "https://verify.cpanel.net/app/verify?ip=" + ip
-	response, _ := http.Get(licensUrl)
-	html_body, _ := io.ReadAll(response.Body)
-	// r := regexp.MustCompile(`<td\s+?align?\S+>`)
-	r := regexp.MustCompile(`<td align=\"[^>]*>(.*?)<\/td>`)
+	licenseURL := "https://verify.cpanel.net/app/verify?ip=" + ip
 
-	if r.MatchString(string(html_body)) == false {
-		fmt.Println("License No found")
-
-	} // boolean match only no parsing
-
-	matchList := r.FindAllStringSubmatch(string(html_body), -1)
-
-	matchedStrings := []string{}
-	// re := regexp.MustCompile(`<td[^>]*>(.*?)</td>`)
-	for _, element := range matchList {
-
-		matchedStrings = append(matchedStrings, strings.ReplaceAll(element[1], "<br/>", ""))
+	// --- HTTP GET ---
+	resp, err := http.Get(licenseURL)
+	if err != nil {
+		fmt.Println("Error fetching license URL:", err)
+		return
 	}
-	for _, element := range matchedStrings {
-		y.Println(element)
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println("Error reading response body:", err)
+		return
 	}
 
+	htmlBody := string(body)
+
+	// --- Regex to capture all <td> inner content ---
+	r := regexp.MustCompile(`(?s)<td\b[^>]*>(.*?)</td>`)
+	matches := r.FindAllStringSubmatch(htmlBody, -1)
+
+	if len(matches) == 0 {
+		fmt.Println("License not found")
+		return
+	}
+
+	// --- Regex to strip tags ---
+	tagCleaner := regexp.MustCompile(`(?s)<[^>]+>`)
+
+	results := []string{}
+	for _, m := range matches {
+		raw := m[1]
+		// remove tags
+		clean := tagCleaner.ReplaceAllString(raw, " ")
+		// decode HTML entities
+		clean = html.UnescapeString(clean)
+		// normalize whitespace
+		clean = strings.TrimSpace(strings.Join(strings.Fields(clean), " "))
+
+		// stop if we hit the legend section
+		if strings.HasPrefix(clean, "*-") {
+			break
+		}
+		results = append(results, clean)
+	}
+
+	// --- Output ---
+	var buf bytes.Buffer
+	for _, text := range results {
+		y.Fprintln(&buf, text)
+	}
+	fmt.Print(buf.String())
 }

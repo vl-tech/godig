@@ -13,11 +13,10 @@ package main
 import (
 	"domain_analyzer/dns_checks"
 	"fmt"
+	"github.com/fatih/color"
 	"os"
 	"strings"
 	"time"
-
-	"github.com/fatih/color"
 )
 
 type Dominfo struct {
@@ -45,10 +44,12 @@ func main() {
 	} else {
 		domain = os.Args[1]
 	}
+
 	d := color.New(color.FgHiYellow, color.Bold)
-	t := color.New(color.BgBlack, color.FgHiMagenta, color.Italic, color.Bold)
 	e := color.New(color.BgHiMagenta, color.FgYellow, color.Bold)
+	t := color.New(color.BgBlack, color.FgHiMagenta, color.Italic, color.Bold)
 	y := color.New(color.FgYellow, color.Bold)
+
 	domainData = Dominfo{
 		IP:        dns_checks.DomainIP(domain),
 		PTR:       dns_checks.ReverseLookup(dns_checks.DomainIP(domain)),
@@ -158,11 +159,6 @@ func main() {
 
 	}
 
-	// cPanel/WHM License check
-	// y.Println("__________________")
-	// t.Println("cPanel License check")
-	// dns_checks.CheckLicense(dns_checks.DomainIP(prefixedDomain))
-	// Checking for Open Ports
 	y.Println("__________________")
 	var choice string
 	t.Println("Final Stage of the script is Checking for open ports")
