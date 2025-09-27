@@ -28,6 +28,7 @@ type Dominfo struct {
 	SSL       error
 	IPinfo    string
 	cNameList [][]string
+	// DomStatus string
 }
 
 var domainData Dominfo
@@ -58,6 +59,7 @@ func main() {
 		NS:        dns_checks.NsLookup(domain),
 		IPinfo:    dns_checks.IpInfo(dns_checks.DomainIP(domain)),
 		cNameList: dns_checks.CnameCheck(domain),
+		
 	}
 
 	startTime := time.Now()
@@ -105,6 +107,11 @@ func main() {
 	if err != nil {
 		e.Println(err)
 	}
+	y.Println("__________________")
+	t.Println("Domain Whois Data")
+	e.Println("It is soon to be deprecated")
+	dns_checks.DomainExpiry(domain)
+
 	// CNAME Check
 	y.Println("__________________")
 	t.Println("Checking list of valid CNAME records")

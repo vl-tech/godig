@@ -16,6 +16,7 @@ func HelpFunc(input string) {
 		"domain ipinfo check",
 		"domain ptr check",
 		"ssl validity check ",
+		"whois data check",
 		"domain get real ip if Cloudflare is used",
 	}
 
