@@ -3,10 +3,10 @@ package dns_checks
 import (
 	"github.com/fatih/color"
 	"github.com/openrdap/rdap"
-	"log"
+
 )
 
-func RdapInfo(domain string) {
+func RdapInfo(domain string) error {
 	y := color.New(color.FgYellow, color.Bold)
 	r := color.New(color.FgRed, color.Bold)
 
@@ -14,7 +14,8 @@ func RdapInfo(domain string) {
 	dataList := []string{}
 	domainInfo, err := client.QueryDomain(domain)
 	if err != nil {
-		log.Fatal("Domain error\t", err)
+		r.Println("Domain error\t", err)
+		return err
 	}
 
 	dataList = append(dataList, domainInfo.Handle, domainInfo.Lang)
@@ -25,9 +26,17 @@ func RdapInfo(domain string) {
 	y.Println("Domain: ", domainInfo.Events[0].Action, domainInfo.Events[0].Date)
 	y.Println("Domain: ", domainInfo.Events[1].Action, domainInfo.Events[1].Date)
 	y.Println("Domain: ", domainInfo.Events[2].Action, domainInfo.Events[2].Date)
-	y.Printf("Registrar: %s [%s %s]\n", domainInfo.Entities[2].VCard.Name(),domainInfo.Entities[2].VCard.Locality(), domainInfo.Entities[2].VCard.Region())
+	if len(domainInfo.Entities) < 3 {
+		r.Println("Registrar: ", domainInfo.Entities[0].VCard.Name())
+	} else {
+		y.Printf("Registrar: %s [%s %s]\n", domainInfo.Entities[2].VCard.Name(), domainInfo.Entities[2].VCard.Locality(), domainInfo.Entities[2].VCard.Region())
+	}
+
 	nsData := domainInfo.Nameservers
-	y.Printf("NS1: %s\nNS2: %s\n", nsData[0].LDHName, nsData[1].LDHName)
-	// fmt.Println(dataList)
+	for i, _ := range nsData {
+		y.Printf("%s\n", nsData[i].LDHName)
+	}
+
+	return nil
 
 }
