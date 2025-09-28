@@ -107,10 +107,10 @@ func main() {
 	if err != nil {
 		e.Println(err)
 	}
+	// Rdap/Whois info
 	y.Println("__________________")
-	t.Println("Domain Whois Data")
-	e.Println("It is soon to be deprecated")
-	dns_checks.DomainExpiry(domain)
+	t.Println("Domain Rdap Data")
+	dns_checks.RdapInfo(domain)
 
 	// CNAME Check
 	y.Println("__________________")
