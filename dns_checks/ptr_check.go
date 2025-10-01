@@ -1,15 +1,13 @@
 package dns_checks
+
 import (
-	"net"
 	"fmt"
+	"net"
 )
+
 func ReverseLookup(ipAddress string) string {
 
 	ip_data, _ := net.LookupAddr(ipAddress)
-	// if err != nil {
-	// 	fmt.Fprintf(os.Stderr, "Error:  %s\n", err)
-
-	// }
 
 	for _, ip := range ip_data {
 		return ip

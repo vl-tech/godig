@@ -59,7 +59,6 @@ func main() {
 		NS:        dns_checks.NsLookup(domain),
 		IPinfo:    dns_checks.IpInfo(dns_checks.DomainIP(domain)),
 		cNameList: dns_checks.CnameCheck(domain),
-		
 	}
 
 	startTime := time.Now()
@@ -169,7 +168,7 @@ func main() {
 	y.Println("__________________")
 	var choice string
 	t.Println("Final Stage of the script is Checking for open ports")
-	t.Println("Please confirm yes or no - y/n ")
+	t.Println("Please confirm yes or no? - [Y/N]")
 	fmt.Scanf("%s", &choice)
 
 	switch choice {

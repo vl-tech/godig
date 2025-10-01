@@ -1,9 +1,9 @@
 package dns_checks
 
 import (
+
 	"github.com/fatih/color"
 	"github.com/openrdap/rdap"
-
 )
 
 func RdapInfo(domain string) error {
@@ -22,16 +22,16 @@ func RdapInfo(domain string) error {
 	for _, stat := range domainInfo.Status {
 		r.Println("Status: ", stat)
 	}
+
 	r.Println("Rdap Url: ", domainInfo.Links[0].Href)
-	y.Println("Domain: ", domainInfo.Events[0].Action, domainInfo.Events[0].Date)
-	y.Println("Domain: ", domainInfo.Events[1].Action, domainInfo.Events[1].Date)
-	y.Println("Domain: ", domainInfo.Events[2].Action, domainInfo.Events[2].Date)
+	for _, event := range domainInfo.Events {
+		y.Println("Domain : ", event.Action, event.Date)
+	}
 	if len(domainInfo.Entities) < 3 {
 		r.Println("Registrar: ", domainInfo.Entities[0].VCard.Name())
 	} else {
 		y.Printf("Registrar: %s [%s %s]\n", domainInfo.Entities[2].VCard.Name(), domainInfo.Entities[2].VCard.Locality(), domainInfo.Entities[2].VCard.Region())
 	}
-
 	nsData := domainInfo.Nameservers
 	for i, _ := range nsData {
 		y.Printf("%s\n", nsData[i].LDHName)
