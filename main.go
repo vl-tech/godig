@@ -1,13 +1,3 @@
-/*
-Function calls and variable assignments
-ip_address := dns_checks.DomainIP(domain)
-dns_checks.CnameCheck(domain)
-reverseData := dns_checks.ReverseLookup(ip_address)
-dns_checks.CnameCheck(domain)
-nsData := dns_checks.NsLookup(domain)
-mxData := dns_checks.MxLookup(domain)
-dns_checks.VerifySSL(domain)
-*/
 package main
 
 import (
@@ -19,19 +9,6 @@ import (
 	"time"
 )
 
-type Dominfo struct {
-	IP        string
-	PTR       string
-	TXT       []string
-	MX        []dns_checks.MxStats
-	NS        []string
-	SSL       error
-	IPinfo    string
-	cNameList [][]string
-	// DomStatus string
-}
-
-var domainData Dominfo
 var domain string
 
 func main() {
@@ -51,49 +28,39 @@ func main() {
 	t := color.New(color.BgBlack, color.FgHiMagenta, color.Italic, color.Bold)
 	y := color.New(color.FgYellow, color.Bold)
 
-	domainData = Dominfo{
-		IP:        dns_checks.DomainIP(domain),
-		PTR:       dns_checks.ReverseLookup(dns_checks.DomainIP(domain)),
-		TXT:       dns_checks.TxtCheck(domain),
-		MX:        dns_checks.MxLookup(domain),
-		NS:        dns_checks.NsLookup(domain),
-		IPinfo:    dns_checks.IpInfo(dns_checks.DomainIP(domain)),
-		cNameList: dns_checks.CnameCheck(domain),
-	}
-
 	startTime := time.Now()
 	fmt.Println()
 	seParator := "\t\t\t\t************* DNS INFO *************"
 	e.Println(seParator)
 	fmt.Println()
-	d.Println("IP: ", domainData.IP)
+	d.Println("IP: ", dns_checks.DomainIP(domain))
 	y.Println("__________________")
 	// IP Info data
 	t.Println("IP Info Data: ")
 	fmt.Println()
-	d.Printf("%s\n", domainData.IPinfo)
+	d.Printf("%s\n", dns_checks.IpInfo(dns_checks.DomainIP(domain)))
 	y.Println("__________________")
 	// NS Records
 	t.Println("NS Records")
 	fmt.Println()
-	y.Printf("%s\n", strings.Join(domainData.NS, "\n"))
+	y.Printf("%s\n", strings.Join(dns_checks.NsLookup(domain), "\n"))
 	y.Println("__________________")
 	// MX Records
 	t.Println("MX Records")
 	fmt.Println()
-	for i, mx := range domainData.MX {
+	for i, mx := range dns_checks.MxLookup(domain) {
 		d.Printf("%d. Host: %s Priority: %d\n", i+1, mx.Host, mx.Prio)
 	}
 
 	//PTR Records
 	y.Println("__________________")
-	d.Println("PTR: ", domainData.PTR)
+	d.Println("PTR: ", dns_checks.ReverseLookup(dns_checks.DomainIP(domain)))
 
 	// TXT Records
 	y.Println("__________________")
 	t.Println("TXT Records")
 	fmt.Println()
-	for _, txt := range domainData.TXT {
+	for _, txt := range dns_checks.CnameCheck(domain) {
 
 		y.Printf("Record --> %s\n", txt)
 
@@ -115,13 +82,13 @@ func main() {
 	y.Println("__________________")
 	t.Println("Checking list of valid CNAME records")
 
-	for _, cn := range domainData.cNameList[0] {
+	for _, cn := range dns_checks.CnameCheck(domain)[0] {
 		y.Println(cn)
 	}
 
 	y.Println("__________________")
 	t.Println("Checking list of invalid CNAME errors")
-	for _, cn := range domainData.cNameList[1] {
+	for _, cn := range dns_checks.CnameCheck(domain)[1] {
 		y.Println(cn)
 	}
 	y.Println("__________________")
@@ -136,9 +103,9 @@ func main() {
 		prefixedDomain = "mail" + "." + domain
 		prefixedDomainIP = dns_checks.DomainIP(prefixedDomain)
 	}
-	if len(domainData.NS) < 1 {
+	if len(dns_checks.NsLookup(domain)) < 1 {
 		e.Println("Domain has no NS records")
-	} else if strings.Contains(domainData.NS[0], "cloudflare.com") {
+	} else if strings.Contains(dns_checks.NsLookup(domain)[0], "cloudflare.com") {
 		t.Println("Domain is using Cloudfalre")
 		t.Println("Trying to obtain real IP from mail cName")
 
