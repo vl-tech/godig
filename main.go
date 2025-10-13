@@ -1,3 +1,4 @@
+
 package main
 
 import (
@@ -8,6 +9,7 @@ import (
 	"strings"
 	"time"
 )
+
 
 var domain string
 
@@ -24,7 +26,7 @@ func main() {
 		dns_checks.HelpFunc(os.Args[1])
 		os.Exit(0)
 	} else if os.Args[1] == "-nmap" || os.Args[1] == "-n" {
-		domain = os.Args[2]
+		domain = dns_checks.CleanDomain(os.Args[2])
 		ip := dns_checks.DomainIP(domain)
 		fmt.Println("__________________")
 		t.Println("Checking Server Default ports")
@@ -34,7 +36,7 @@ func main() {
 		}
 		os.Exit(0)
 	} else {
-		domain = os.Args[1]
+		domain = dns_checks.CleanDomain(os.Args[1])
 	}
 	startTime := time.Now()
 	fmt.Println()
@@ -42,6 +44,11 @@ func main() {
 	e.Println(seParator)
 	fmt.Println()
 	d.Println("IP: ", dns_checks.DomainIP(domain))
+	y.Println("__________________")
+	// CMS Detection
+	t.Println("CMS Detection:")
+	cms := dns_checks.DetectCMS(domain)
+	d.Println("Detected CMS:", cms)
 	y.Println("__________________")
 	// IP Info data
 	t.Println("IP Info Data: ")

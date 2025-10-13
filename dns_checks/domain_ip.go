@@ -12,6 +12,7 @@ func DomainIP(domain string) string {
 
 	if err != nil {
 		e.Fprintf(os.Stderr, "Unable to parse data %s\n", err)
+		os.Exit(1)
 	}
 	for _, ip := range ips {
 		return ip.String()
