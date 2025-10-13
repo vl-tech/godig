@@ -18,6 +18,7 @@ func HelpFunc(input string) {
 		"ssl validity check ",
 		"whois data check",
 		"domain get real ip if Cloudflare is used",
+		"run nmap with -n or -nmap flags",
 	}
 
 	y.Println()

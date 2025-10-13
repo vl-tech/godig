@@ -12,6 +12,10 @@ import (
 var domain string
 
 func main() {
+	d := color.New(color.FgHiYellow, color.Bold)
+	e := color.New(color.BgHiMagenta, color.FgYellow, color.Bold)
+	t := color.New(color.BgBlack, color.FgHiMagenta, color.Italic, color.Bold)
+	y := color.New(color.FgYellow, color.Bold)
 
 	if len(os.Args) < 2 {
 		dns_checks.HelpFunc("")
@@ -19,15 +23,19 @@ func main() {
 	} else if len(os.Args) == 2 && os.Args[1] == "--help" || os.Args[1] == "-h" || os.Args[1] == "--h" {
 		dns_checks.HelpFunc(os.Args[1])
 		os.Exit(0)
+	} else if os.Args[1] == "-nmap" || os.Args[1] == "-n" {
+		domain = os.Args[2]
+		ip := dns_checks.DomainIP(domain)
+		fmt.Println("__________________")
+		t.Println("Checking Server Default ports")
+		portStatus := dns_checks.CheckOpenPorts(dns_checks.DomainIP(ip))
+		for port, status := range portStatus {
+			y.Printf("%d\t%s\n", port, status)
+		}
+		os.Exit(0)
 	} else {
 		domain = os.Args[1]
 	}
-
-	d := color.New(color.FgHiYellow, color.Bold)
-	e := color.New(color.BgHiMagenta, color.FgYellow, color.Bold)
-	t := color.New(color.BgBlack, color.FgHiMagenta, color.Italic, color.Bold)
-	y := color.New(color.FgYellow, color.Bold)
-
 	startTime := time.Now()
 	fmt.Println()
 	seParator := "\t\t\t\t************* DNS INFO *************"
