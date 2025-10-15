@@ -3,7 +3,7 @@ package dns_checks
 import (
 	"net"
 )
-
+// CnameChek Deorecated not used
 func CnameCheck(domain string) [][]string {
 	domPrefix := []string{"mail", "cpanel", "whm", "www", "webmail"}
 	cnameList := []string{}

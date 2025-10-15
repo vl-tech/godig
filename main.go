@@ -1,4 +1,3 @@
-
 package main
 
 import (
@@ -10,15 +9,16 @@ import (
 	"time"
 )
 
-
-var domain string
+var (
+	domain    string
+	d         = color.New(color.FgHiYellow, color.Bold)
+	e         = color.New(color.BgHiMagenta, color.FgYellow, color.Bold)
+	t         = color.New(color.BgBlack, color.FgHiMagenta, color.Italic, color.Bold)
+	y         = color.New(color.FgYellow, color.Bold)
+	startTime = time.Now()
+)
 
 func main() {
-	d := color.New(color.FgHiYellow, color.Bold)
-	e := color.New(color.BgHiMagenta, color.FgYellow, color.Bold)
-	t := color.New(color.BgBlack, color.FgHiMagenta, color.Italic, color.Bold)
-	y := color.New(color.FgYellow, color.Bold)
-
 	if len(os.Args) < 2 {
 		dns_checks.HelpFunc("")
 		os.Exit(0)
@@ -38,28 +38,32 @@ func main() {
 	} else {
 		domain = dns_checks.CleanDomain(os.Args[1])
 	}
-	startTime := time.Now()
+
 	fmt.Println()
 	seParator := "\t\t\t\t************* DNS INFO *************"
 	e.Println(seParator)
 	fmt.Println()
 	d.Println("IP: ", dns_checks.DomainIP(domain))
 	y.Println("__________________")
+
 	// CMS Detection
 	t.Println("CMS Detection:")
 	cms := dns_checks.DetectCMS(domain)
 	d.Println("Detected CMS:", cms)
 	y.Println("__________________")
+
 	// IP Info data
 	t.Println("IP Info Data: ")
 	fmt.Println()
 	d.Printf("%s\n", dns_checks.IpInfo(dns_checks.DomainIP(domain)))
 	y.Println("__________________")
+
 	// NS Records
 	t.Println("NS Records")
 	fmt.Println()
 	y.Printf("%s\n", strings.Join(dns_checks.NsLookup(domain), "\n"))
 	y.Println("__________________")
+
 	// MX Records
 	t.Println("MX Records")
 	fmt.Println()
@@ -75,7 +79,7 @@ func main() {
 	y.Println("__________________")
 	t.Println("TXT Records")
 	fmt.Println()
-	for _, txt := range dns_checks.CnameCheck(domain) {
+	for _, txt := range dns_checks.TxtCheck(domain) {
 
 		y.Printf("Record --> %s\n", txt)
 
@@ -92,24 +96,21 @@ func main() {
 	y.Println("__________________")
 	t.Println("Domain Rdap Data")
 	dns_checks.RdapInfo(domain)
-
-	// CNAME Check
-	y.Println("__________________")
-	t.Println("Checking list of valid CNAME records")
-
-	for _, cn := range dns_checks.CnameCheck(domain)[0] {
-		y.Println(cn)
-	}
-
-	y.Println("__________________")
-	t.Println("Checking list of invalid CNAME errors")
-	for _, cn := range dns_checks.CnameCheck(domain)[1] {
-		y.Println(cn)
-	}
 	y.Println("__________________")
 
 	// Cloudfalre Check and obtain real IP
 	y.Println("__________________")
+	cloudflareCheck(domain)
+	checkOpenPortsWrapper(domain)
+
+	// Script elapsed time
+	elapsedTime := time.Since(startTime)
+	t.Printf("Script elapsed time is: %v\n", elapsedTime)
+}
+
+
+
+func cloudflareCheck(domain string) {
 	var prefixedDomain string
 	var prefixedDomainIP string
 	if strings.Contains(domain, "mail.") {
@@ -147,6 +148,10 @@ func main() {
 
 	}
 
+}
+
+func checkOpenPortsWrapper(domain string) {
+	// Open Ports Check
 	y.Println("__________________")
 	var choice string
 	t.Println("Final Stage of the script is Checking for open ports")
@@ -161,16 +166,15 @@ func main() {
 		for port, status := range portStatus {
 			y.Printf("%d\t%s\n", port, status)
 		}
+
 	case "n":
 		d.Println("Terminating script")
 		d.Println("Bye Bye")
-		os.Exit(0)
 	default:
 		d.Println("Nothing was selected or input was invalid")
 		d.Println("Terminating script")
 		d.Println("Bye Bye")
+
 	}
-	elapsedTime := time.Since(startTime)
-	t.Printf("Script elapsed time is: %v\n", elapsedTime)
 
 }
