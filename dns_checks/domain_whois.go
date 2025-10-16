@@ -7,7 +7,7 @@ import (
 	whoisparser "github.com/likexian/whois-parser"
 )
 
-func DomainExpiry(domain string) {
+func WhoisDomain(domain string) error {
 	y := color.New(color.FgYellow, color.Bold)
 	whois_raw, err := whois.Whois(domain)
 	if err != nil {
@@ -15,8 +15,9 @@ func DomainExpiry(domain string) {
 	}
 	info, err := whoisparser.Parse(whois_raw)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Printf("No Whois data for Domain %s Error: %v\n ", domain, err)
 	}
+
 	if info.Domain != nil {
 		y.Println("Domain:", info.Domain.Domain)
 		y.Println("Created:", info.Domain.CreatedDate)
@@ -27,4 +28,5 @@ func DomainExpiry(domain string) {
 	if info.Registrar != nil {
 		y.Println("Registrar Name:", info.Registrar.Name)
 	}
+	return nil
 }

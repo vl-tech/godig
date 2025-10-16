@@ -96,6 +96,7 @@ func main() {
 	y.Println("__________________")
 	t.Println("Domain Rdap Data")
 	dns_checks.RdapInfo(domain)
+
 	y.Println("__________________")
 
 	// Cloudfalre Check and obtain real IP
@@ -107,8 +108,6 @@ func main() {
 	elapsedTime := time.Since(startTime)
 	t.Printf("Script elapsed time is: %v\n", elapsedTime)
 }
-
-
 
 func cloudflareCheck(domain string) {
 	var prefixedDomain string

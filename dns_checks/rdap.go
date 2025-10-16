@@ -1,7 +1,6 @@
 package dns_checks
 
 import (
-
 	"github.com/fatih/color"
 	"github.com/openrdap/rdap"
 )
@@ -14,10 +13,12 @@ func RdapInfo(domain string) error {
 	dataList := []string{}
 	domainInfo, err := client.QueryDomain(domain)
 	if err != nil {
-		r.Println("Domain error\t", err)
-		return err
+		r.Println(err)
+		r.Println("Checking Whois data")
+		y.Println("__________________")
+		WhoisDomain(domain)
+		return nil
 	}
-
 	dataList = append(dataList, domainInfo.Handle, domainInfo.Lang)
 	for _, stat := range domainInfo.Status {
 		r.Println("Status: ", stat)
