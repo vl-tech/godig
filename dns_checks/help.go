@@ -21,14 +21,14 @@ func HelpFunc(input string) {
 		"run nmap with -n or -nmap flags",
 	}
 
-	y.Println()
-	y.Println("Please enter Valid domain name not FQDN")
-	t.Println("Example: <domain.com>, <example.com> ")
-	y.Println("-h --help or empty input to display this help message.")
-	y.Println("==========================================")
-	y.Println("Available Functions\t")
+	_, _ = y.Println()
+	_, _ = y.Println("Please enter Valid domain name not FQDN")
+	_, _ = t.Println("Example: <domain.com>, <example.com> ")
+	_, _ = y.Println("-h --help or empty input to display this help message.")
+	_, _ = y.Println("==========================================")
+	_, _ = y.Println("Available Functions\t")
 	for _, fn := range functionsList {
-		y.Println(fn)
+		_, _ = y.Println(fn)
 	}
 
 }

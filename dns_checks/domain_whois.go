@@ -19,14 +19,14 @@ func WhoisDomain(domain string) error {
 	}
 
 	if info.Domain != nil {
-		y.Println("Domain:", info.Domain.Domain)
-		y.Println("Created:", info.Domain.CreatedDate)
-		y.Println("Expires:", info.Domain.ExpirationDate)
-		y.Println("Name Servers:", info.Domain.NameServers)
-		y.Println("Status:", info.Domain.Status)
+	_, _ = y.Println("Domain:", info.Domain.Domain)
+	_, _ = y.Println("Created:", info.Domain.CreatedDate)
+	_, _ = y.Println("Expires:", info.Domain.ExpirationDate)
+	_, _ = y.Println("Name Servers:", info.Domain.NameServers)
+	_, _ = y.Println("Status:", info.Domain.Status)
 	}
 	if info.Registrar != nil {
-		y.Println("Registrar Name:", info.Registrar.Name)
+	_, _ = y.Println("Registrar Name:", info.Registrar.Name)
 	}
 	return nil
 }

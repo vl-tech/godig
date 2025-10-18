@@ -3,9 +3,10 @@ package dns_checks
 import (
 	"crypto/tls"
 	"fmt"
-	"github.com/fatih/color"
 	"net"
 	"time"
+
+	"github.com/fatih/color"
 )
 
 func VerifySSL(domain string) error {
@@ -25,7 +26,7 @@ func VerifySSL(domain string) error {
 	if err != nil {
 		return fmt.Errorf("SSL connection error: %w", err)
 	}
-	defer conn.Close()
+	defer func() { _ = conn.Close() }()
 
 	// Verify hostname (should already be done if ServerName is set in tls.Config)
 	if err := conn.VerifyHostname(domain); err != nil {
@@ -39,7 +40,7 @@ func VerifySSL(domain string) error {
 	}
 
 	cert := state.PeerCertificates[0]
-	y.Printf("Issuer: %s\nExpiry: %v\n", cert.Issuer, cert.NotAfter.Format(time.RFC850))
+	_, _ = y.Printf("Issuer: %s\nExpiry: %v\n", cert.Issuer, cert.NotAfter.Format(time.RFC850))
 
 	return nil
 }

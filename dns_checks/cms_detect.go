@@ -11,7 +11,7 @@ func DetectCMS(domain string) string {
 	if err != nil {
 		return "Unable to fetch domain"
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	body, _ := io.ReadAll(resp.Body)
 	html := string(body)
 

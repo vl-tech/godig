@@ -3,10 +3,11 @@ package main
 import (
 	"domain_analyzer/dns_checks"
 	"fmt"
-	"github.com/fatih/color"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/fatih/color"
 )
 
 var (
@@ -29,10 +30,10 @@ func main() {
 		domain = dns_checks.CleanDomain(os.Args[2])
 		ip := dns_checks.DomainIP(domain)
 		fmt.Println("__________________")
-		t.Println("Checking Server Default ports")
+		_, _ = t.Println("Checking Server Default ports")
 		portStatus := dns_checks.CheckOpenPorts(dns_checks.DomainIP(ip))
 		for port, status := range portStatus {
-			y.Printf("%d\t%s\n", port, status)
+			_, _ = y.Printf("%d\t%s\n", port, status)
 		}
 		os.Exit(0)
 	} else {
@@ -41,72 +42,73 @@ func main() {
 
 	fmt.Println()
 	seParator := "\t\t\t\t************* DNS INFO *************"
-	e.Println(seParator)
+	_, _ = e.Println(seParator)
 	fmt.Println()
-	d.Println("IP: ", dns_checks.DomainIP(domain))
-	y.Println("__________________")
+	_, _ = d.Println("IP: ", dns_checks.DomainIP(domain))
+	_, _ = y.Println("__________________")
 
 	// CMS Detection
-	t.Println("CMS Detection:")
+	_, _ = t.Println("CMS Detection:")
 	cms := dns_checks.DetectCMS(domain)
-	d.Println("Detected CMS:", cms)
-	y.Println("__________________")
+	_, _ = d.Println("Detected CMS:", cms)
+	_, _ = y.Println("__________________")
 
 	// IP Info data
-	t.Println("IP Info Data: ")
+	_, _ = t.Println("IP Info Data: ")
 	fmt.Println()
-	d.Printf("%s\n", dns_checks.IpInfo(dns_checks.DomainIP(domain)))
-	y.Println("__________________")
+	_, _ = d.Printf("%s\n", dns_checks.IpInfo(dns_checks.DomainIP(domain)))
+	_, _ = y.Println("__________________")
 
 	// NS Records
-	t.Println("NS Records")
+	_, _ = t.Println("NS Records")
 	fmt.Println()
-	y.Printf("%s\n", strings.Join(dns_checks.NsLookup(domain), "\n"))
-	y.Println("__________________")
+	_, _ = y.Printf("%s\n", strings.Join(dns_checks.NsLookup(domain), "\n"))
+	_, _ = y.Println("__________________")
 
 	// MX Records
-	t.Println("MX Records")
+	_, _ = t.Println("MX Records")
 	fmt.Println()
 	for i, mx := range dns_checks.MxLookup(domain) {
-		d.Printf("%d. Host: %s Priority: %d\n", i+1, mx.Host, mx.Prio)
+		_, _ = d.Printf("%d. Host: %s Priority: %d\n", i+1, mx.Host, mx.Prio)
 	}
 
 	//PTR Records
-	y.Println("__________________")
-	d.Println("PTR: ", dns_checks.ReverseLookup(dns_checks.DomainIP(domain)))
+	_, _ = y.Println("__________________")
+	_, _ = d.Println("PTR: ", dns_checks.ReverseLookup(dns_checks.DomainIP(domain)))
 
 	// TXT Records
-	y.Println("__________________")
-	t.Println("TXT Records")
+	_, _ = y.Println("__________________")
+	_, _ = t.Println("TXT Records")
 	fmt.Println()
 	for _, txt := range dns_checks.TxtCheck(domain) {
-
-		y.Printf("Record --> %s\n", txt)
+		_, _ = y.Printf("Record --> %s\n", txt)
 
 	}
 
 	// SSL Check
-	y.Println("__________________")
-	t.Println("SSL Check")
+	_, _ = y.Println("__________________")
+	_, _ = t.Println("SSL Check")
 	err := dns_checks.VerifySSL(domain)
 	if err != nil {
-		e.Println(err)
+		_, _ = e.Println(err)
 	}
 	// Rdap/Whois info
-	y.Println("__________________")
-	t.Println("Domain Rdap Data")
-	dns_checks.RdapInfo(domain)
+	_, _ = y.Println("__________________")
+	_, _ = t.Println("Domain Rdap Data")
+	if err := dns_checks.RdapInfo(domain); err != nil {
+		_, _ = e.Println(err)
+	}
 
-	y.Println("__________________")
+	_, _ = y.Println("__________________")
 
 	// Cloudfalre Check and obtain real IP
-	y.Println("__________________")
+	_, _ = y.Println("__________________")
 	cloudflareCheck(domain)
 	checkOpenPortsWrapper(domain)
 
 	// Script elapsed time
 	elapsedTime := time.Since(startTime)
-	t.Printf("Script elapsed time is: %v\n", elapsedTime)
+	_, _ = t.Printf("Script elapsed time is: %v\n", elapsedTime)
 }
 
 func cloudflareCheck(domain string) {
@@ -119,30 +121,30 @@ func cloudflareCheck(domain string) {
 		prefixedDomainIP = dns_checks.DomainIP(prefixedDomain)
 	}
 	if len(dns_checks.NsLookup(domain)) < 1 {
-		e.Println("Domain has no NS records")
+		_, _ = e.Println("Domain has no NS records")
 	} else if strings.Contains(dns_checks.NsLookup(domain)[0], "cloudflare.com") {
-		t.Println("Domain is using Cloudfalre")
-		t.Println("Trying to obtain real IP from mail cName")
+		_, _ = t.Println("Domain is using Cloudfalre")
+		_, _ = t.Println("Trying to obtain real IP from mail cName")
 
 		resuls := dns_checks.IpInfo(prefixedDomainIP)
 		if strings.Contains(resuls, "Cloudflare") {
-			e.Println("Unable to obtain real IP")
-			e.Println("Mail cname is also pointed to Cloudfalre")
+			_, _ = e.Println("Unable to obtain real IP")
+			_, _ = e.Println("Mail cname is also pointed to Cloudfalre")
 		} else {
-			t.Println("Real IP Is: ")
-			y.Println("__________________")
-			y.Println(dns_checks.DomainIP(prefixedDomain))
+			_, _ = t.Println("Real IP Is: ")
+			_, _ = y.Println("__________________")
+			_, _ = y.Println(dns_checks.DomainIP(prefixedDomain))
 			// cPanel/WHM License check
-			y.Println("__________________")
-			t.Println("cPanel License check")
+			_, _ = y.Println("__________________")
+			_, _ = t.Println("cPanel License check")
 			dns_checks.CheckLicense(dns_checks.DomainIP(prefixedDomain))
 		}
 
 	} else {
-		t.Println("Domain is not using Cloudflare")
+		_, _ = t.Println("Domain is not using Cloudflare")
 		// cPanel/WHM License check
-		y.Println("__________________")
-		t.Println("cPanel License check")
+		_, _ = y.Println("__________________")
+		_, _ = t.Println("cPanel License check")
 		dns_checks.CheckLicense(dns_checks.DomainIP(prefixedDomain))
 
 	}
@@ -151,28 +153,28 @@ func cloudflareCheck(domain string) {
 
 func checkOpenPortsWrapper(domain string) {
 	// Open Ports Check
-	y.Println("__________________")
+	_, _ = y.Println("__________________")
 	var choice string
-	t.Println("Final Stage of the script is Checking for open ports")
-	t.Println("Please confirm yes or no? - [Y/N]")
-	fmt.Scanf("%s", &choice)
+	_, _ = t.Println("Final Stage of the script is Checking for open ports")
+	_, _ = t.Println("Please confirm yes or no? - [Y/N]")
+	_, _ = fmt.Scanf("%s", &choice)
 
 	switch choice {
 	case "y":
 		fmt.Println("__________________")
-		t.Println("Checking Server Default ports")
+		_, _ = t.Println("Checking Server Default ports")
 		portStatus := dns_checks.CheckOpenPorts(dns_checks.DomainIP(domain))
 		for port, status := range portStatus {
-			y.Printf("%d\t%s\n", port, status)
+			_, _ = y.Printf("%d\t%s\n", port, status)
 		}
 
 	case "n":
-		d.Println("Terminating script")
-		d.Println("Bye Bye")
+		_, _ = d.Println("Terminating script")
+		_, _ = d.Println("Bye Bye")
 	default:
-		d.Println("Nothing was selected or input was invalid")
-		d.Println("Terminating script")
-		d.Println("Bye Bye")
+		_, _ = d.Println("Nothing was selected or input was invalid")
+		_, _ = d.Println("Terminating script")
+		_, _ = d.Println("Bye Bye")
 
 	}
 

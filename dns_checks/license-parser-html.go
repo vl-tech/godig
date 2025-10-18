@@ -3,12 +3,13 @@ package dns_checks
 import (
 	"bytes"
 	"fmt"
-	"github.com/fatih/color"
 	"html"
 	"io"
 	"net/http"
 	"regexp"
 	"strings"
+
+	"github.com/fatih/color"
 )
 
 func CheckLicense(ip string) {
@@ -21,7 +22,7 @@ func CheckLicense(ip string) {
 		fmt.Println("Error fetching license URL:", err)
 		return
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -63,7 +64,7 @@ func CheckLicense(ip string) {
 	// --- Output ---
 	var buf bytes.Buffer
 	for _, text := range results {
-		y.Fprintln(&buf, text)
+		_, _ = y.Fprintln(&buf, text)
 	}
 	fmt.Print(buf.String())
 }

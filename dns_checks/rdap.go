@@ -10,32 +10,32 @@ func RdapInfo(domain string) error {
 	r := color.New(color.FgRed, color.Bold)
 
 	client := &rdap.Client{}
-	dataList := []string{}
+	// dataList was introduced previously but not used; omit it to avoid ineffassign
 	domainInfo, err := client.QueryDomain(domain)
 	if err != nil {
-		r.Println(err)
-		r.Println("Checking Whois data")
-		y.Println("__________________")
-		WhoisDomain(domain)
+		_, _ = r.Println(err)
+		_, _ = r.Println("Checking Whois data")
+		_, _ = y.Println("__________________")
+		// Fall back to WHOIS if RDAP fails
+		_ = WhoisDomain(domain)
 		return nil
 	}
-	dataList = append(dataList, domainInfo.Handle, domainInfo.Lang)
 	for _, stat := range domainInfo.Status {
-		r.Println("Status: ", stat)
+		_, _ = r.Println("Status: ", stat)
 	}
 
-	r.Println("Rdap Url: ", domainInfo.Links[0].Href)
+	_, _ = r.Println("Rdap Url: ", domainInfo.Links[0].Href)
 	for _, event := range domainInfo.Events {
-		y.Println("Domain : ", event.Action, event.Date)
+		_, _ = y.Println("Domain : ", event.Action, event.Date)
 	}
 	if len(domainInfo.Entities) < 3 {
-		r.Println("Registrar: ", domainInfo.Entities[0].VCard.Name())
+		_, _ = r.Println("Registrar: ", domainInfo.Entities[0].VCard.Name())
 	} else {
-		y.Printf("Registrar: %s [%s %s]\n", domainInfo.Entities[2].VCard.Name(), domainInfo.Entities[2].VCard.Locality(), domainInfo.Entities[2].VCard.Region())
+		_, _ = y.Printf("Registrar: %s [%s %s]\n", domainInfo.Entities[2].VCard.Name(), domainInfo.Entities[2].VCard.Locality(), domainInfo.Entities[2].VCard.Region())
 	}
 	nsData := domainInfo.Nameservers
-	for i, _ := range nsData {
-		y.Printf("%s\n", nsData[i].LDHName)
+	for i := range nsData {
+		_, _ = y.Printf("%s\n", nsData[i].LDHName)
 	}
 
 	return nil

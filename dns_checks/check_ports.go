@@ -20,8 +20,9 @@ func CheckOpenPorts(ip string) map[int]string {
 			continue
 		}
 
-		portStatuses[port] = "Open"
-		conn.Close() // Close only when connection is successful
+	portStatuses[port] = "Open"
+	// Ensure we explicitly handle the Close() error to satisfy linters
+	_ = conn.Close() // Close only when connection is successful
 
 	}
 	return portStatuses
