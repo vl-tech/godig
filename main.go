@@ -16,6 +16,7 @@ var (
 	e         = color.New(color.BgHiMagenta, color.FgYellow, color.Bold)
 	t         = color.New(color.BgBlack, color.FgHiMagenta, color.Italic, color.Bold)
 	y         = color.New(color.FgYellow, color.Bold)
+	g         = color.New(color.FgHiGreen, color.Bold)
 	startTime = time.Now()
 )
 
@@ -30,10 +31,15 @@ func main() {
 		domain = dns_checks.CleanDomain(os.Args[2])
 		ip := dns_checks.DomainIP(domain)
 		fmt.Println("__________________")
+		// CheckPortsWrapper(domain) --- IGNORE ---
 		_, _ = t.Println("Checking Server Default ports")
 		portStatus := dns_checks.CheckOpenPorts(dns_checks.DomainIP(ip))
 		for port, status := range portStatus {
-			_, _ = y.Printf("%d\t%s\n", port, status)
+			if status == "Open" {
+				_, _ = g.Printf("%d\t%s\n", port, status)
+			} else {
+				_, _ = t.Printf("%d\t%s\n", port, status)
+			}
 		}
 		os.Exit(0)
 	} else {
@@ -103,52 +109,72 @@ func main() {
 
 	// Cloudfalre Check and obtain real IP
 	_, _ = y.Println("__________________")
-	cloudflareCheck(domain)
-	checkOpenPortsWrapper(domain)
-
+	// cloudflareCheck(domain)
+	// Open Ports Check
+	_, _ = y.Println("__________________")
+	_, realIP := cloudflareCheck(domain)
+	if realIP == "" {
+		if !strings.Contains(domain, "mail.") {
+			realIP = dns_checks.DomainIP(domain)
+			checkOpenPortsWrapper(realIP)
+		} else {
+			_, _ = d.Println("Mail subdomain does not exist, skipping open ports check")
+		}
+	} else {
+		checkOpenPortsWrapper(realIP)
+	}
 	// Script elapsed time
 	elapsedTime := time.Since(startTime)
 	_, _ = t.Printf("Script elapsed time is: %v\n", elapsedTime)
 }
 
-func cloudflareCheck(domain string) {
+func cloudflareCheck(domain string) (bool, string) {
 	var prefixedDomain string
 	var prefixedDomainIP string
+	var baseDomain string
+
 	if strings.Contains(domain, "mail.") {
 		prefixedDomainIP = dns_checks.DomainIP(domain)
+		prefixedDomain = domain
+		baseDomain = strings.TrimPrefix(domain, "mail.")
 	} else {
+		baseDomain = domain
 		prefixedDomain = "mail" + "." + domain
 		prefixedDomainIP = dns_checks.DomainIP(prefixedDomain)
 	}
-	if len(dns_checks.NsLookup(domain)) < 1 {
+	realIP := prefixedDomainIP
+	if len(dns_checks.NsLookup(baseDomain)) < 1 {
 		_, _ = e.Println("Domain has no NS records")
-	} else if strings.Contains(dns_checks.NsLookup(domain)[0], "cloudflare.com") {
+	} else if strings.Contains(dns_checks.NsLookup(baseDomain)[0], "cloudflare.com") {
 		_, _ = t.Println("Domain is using Cloudfalre")
 		_, _ = t.Println("Trying to obtain real IP from mail cName")
 
 		resuls := dns_checks.IpInfo(prefixedDomainIP)
+
 		if strings.Contains(resuls, "Cloudflare") {
 			_, _ = e.Println("Unable to obtain real IP")
 			_, _ = e.Println("Mail cname is also pointed to Cloudfalre")
 		} else {
 			_, _ = t.Println("Real IP Is: ")
 			_, _ = y.Println("__________________")
-			_, _ = y.Println(dns_checks.DomainIP(prefixedDomain))
+
+			_, _ = d.Println("IP: ", realIP)
+			_, _ = y.Println()
 			// cPanel/WHM License check
 			_, _ = y.Println("__________________")
 			_, _ = t.Println("cPanel License check")
 			dns_checks.CheckLicense(dns_checks.DomainIP(prefixedDomain))
 		}
-
+		return true, realIP
 	} else {
 		_, _ = t.Println("Domain is not using Cloudflare")
 		// cPanel/WHM License check
 		_, _ = y.Println("__________________")
 		_, _ = t.Println("cPanel License check")
 		dns_checks.CheckLicense(dns_checks.DomainIP(prefixedDomain))
-
+		return false, realIP
 	}
-
+	return false, ""
 }
 
 func checkOpenPortsWrapper(domain string) {
@@ -163,11 +189,19 @@ func checkOpenPortsWrapper(domain string) {
 	case "y":
 		fmt.Println("__________________")
 		_, _ = t.Println("Checking Server Default ports")
+		// portStatus := dns_checks.CheckOpenPorts(dns_checks.DomainIP(domain))
+		// for port, status := range portStatus {
+		// 	_, _ = y.Printf("%d\t%s\n", port, status)
+		// }
+
 		portStatus := dns_checks.CheckOpenPorts(dns_checks.DomainIP(domain))
 		for port, status := range portStatus {
-			_, _ = y.Printf("%d\t%s\n", port, status)
+			if status == "Open" {
+				_, _ = g.Printf("%d\t%s\n", port, status)
+			} else {
+				_, _ = t.Printf("%d\t%s\n", port, status)
+			}
 		}
-
 	case "n":
 		_, _ = d.Println("Terminating script")
 		_, _ = d.Println("Bye Bye")
