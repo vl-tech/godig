@@ -33,15 +33,17 @@ func main() {
 		fmt.Println("__________________")
 		// CheckPortsWrapper(domain) --- IGNORE ---
 		_, _ = t.Println("Checking Server Default ports")
-		portStatus := dns_checks.CheckOpenPorts(dns_checks.DomainIP(ip))
-		for port, status := range portStatus {
-			if status == "Open" {
-				_, _ = g.Printf("%d\t%s\n", port, status)
-			} else {
-				_, _ = t.Printf("%d\t%s\n", port, status)
-			}
-		}
+		dns_checks.PortChecker(ip)
 		os.Exit(0)
+		// portStatus := dns_checks.CheckOpenPorts(dns_checks.DomainIP(ip))
+		// for port, status := range portStatus {
+		// 	if status == "Open" {
+		// 		_, _ = g.Printf("%d\t%s\n", port, status)
+		// 	} else {
+		// 		_, _ = t.Printf("%d\t%s\n", port, status)
+		// 	}
+		// }
+		// os.Exit(0)
 	} else {
 		domain = dns_checks.CleanDomain(os.Args[1])
 	}
@@ -193,15 +195,15 @@ func checkOpenPortsWrapper(domain string) {
 		// for port, status := range portStatus {
 		// 	_, _ = y.Printf("%d\t%s\n", port, status)
 		// }
-
-		portStatus := dns_checks.CheckOpenPorts(dns_checks.DomainIP(domain))
-		for port, status := range portStatus {
-			if status == "Open" {
-				_, _ = g.Printf("%d\t%s\n", port, status)
-			} else {
-				_, _ = t.Printf("%d\t%s\n", port, status)
-			}
-		}
+		dns_checks.PortChecker(domain)
+		// portStatus := dns_checks.CheckOpenPorts(dns_checks.DomainIP(domain))
+		// for port, status := range portStatus {
+		// 	if status == "Open" {
+		// 		_, _ = g.Printf("%d\t%s\n", port, status)
+		// 	} else {
+		// 		_, _ = t.Printf("%d\t%s\n", port, status)
+		// 	}
+		// }
 	case "n":
 		_, _ = d.Println("Terminating script")
 		_, _ = d.Println("Bye Bye")
