@@ -1,19 +1,15 @@
 package dns_checks
 
 import (
-	"bytes"
 	"fmt"
 	"html"
 	"io"
 	"net/http"
 	"regexp"
 	"strings"
-
-	"github.com/fatih/color"
 )
 
 func CheckLicense(ip string) {
-	y := color.New(color.FgYellow, color.Bold)
 	licenseURL := "https://verify.cpanel.net/app/verify?ip=" + ip
 
 	// --- HTTP GET ---
@@ -62,9 +58,10 @@ func CheckLicense(ip string) {
 	}
 
 	// --- Output ---
-	var buf bytes.Buffer
+	// var buf bytes.Buffer
 	for _, text := range results {
-		_, _ = y.Fprintln(&buf, text)
+		// _, _ = y.Fprintln(&buf, "\\___", text)
+		g.Printf("%s\n", text)
 	}
-	fmt.Print(buf.String())
+
 }

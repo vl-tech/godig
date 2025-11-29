@@ -10,7 +10,7 @@ import (
 )
 
 func VerifySSL(domain string) error {
-	y := color.New(color.FgYellow, color.Bold)
+	y := color.New(color.FgHiGreen, color.Bold)
 	sslDomain := domain + ":443"
 
 	// Create a dialer with a timeout

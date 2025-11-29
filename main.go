@@ -12,11 +12,10 @@ import (
 
 var (
 	domain    string
-	d         = color.New(color.FgHiYellow, color.Bold)
+	d         = color.New(color.FgHiGreen, color.Bold)
 	e         = color.New(color.BgHiMagenta, color.FgYellow, color.Bold)
 	t         = color.New(color.BgBlack, color.FgHiMagenta, color.Italic, color.Bold)
 	y         = color.New(color.FgYellow, color.Bold)
-	g         = color.New(color.FgHiGreen, color.Bold)
 	startTime = time.Now()
 )
 
@@ -30,20 +29,20 @@ func main() {
 	} else if os.Args[1] == "-nmap" || os.Args[1] == "-n" {
 		domain = dns_checks.CleanDomain(os.Args[2])
 		ip := dns_checks.DomainIP(domain)
-		fmt.Println("__________________")
+		y.Println("__________________")
 		// CheckPortsWrapper(domain) --- IGNORE ---
 		_, _ = t.Println("Checking Server Default ports")
 		dns_checks.PortChecker(ip)
 		os.Exit(0)
-		// portStatus := dns_checks.CheckOpenPorts(dns_checks.DomainIP(ip))
-		// for port, status := range portStatus {
-		// 	if status == "Open" {
-		// 		_, _ = g.Printf("%d\t%s\n", port, status)
-		// 	} else {
-		// 		_, _ = t.Printf("%d\t%s\n", port, status)
-		// 	}
-		// }
-		// os.Exit(0)
+
+	} else if len(os.Args) > 1 && os.Args[1] == "-sp" || os.Args[1] == "--single-port" {
+		requqestedPort := os.Args[3]
+		domain = dns_checks.CleanDomain(os.Args[2])
+		ip := dns_checks.DomainIP(domain)
+		y.Println("__________________")
+		t.Printf("Checking Port %s\n", requqestedPort)
+		dns_checks.SinglePortCheck(ip, requqestedPort)
+		os.Exit(0)
 	} else {
 		domain = dns_checks.CleanDomain(os.Args[1])
 	}
@@ -55,22 +54,40 @@ func main() {
 	_, _ = d.Println("IP: ", dns_checks.DomainIP(domain))
 	_, _ = y.Println("__________________")
 
-	// CMS Detection
-	_, _ = t.Println("CMS Detection:")
-	cms := dns_checks.DetectCMS(domain)
-	_, _ = d.Println("Detected CMS:", cms)
-	_, _ = y.Println("__________________")
+	// // CMS Detection
+	// _, _ = t.Println("CMS Detection:")
+	// cms := dns_checks.DetectCMS(domain)
+	// _, _ = d.Println("Detected CMS:", cms)
+	// _, _ = y.Println("__________________")
 
 	// IP Info data
 	_, _ = t.Println("IP Info Data: ")
 	fmt.Println()
-	_, _ = d.Printf("%s\n", dns_checks.IpInfo(dns_checks.DomainIP(domain)))
-	_, _ = y.Println("__________________")
+	ipInfoData := dns_checks.IpInfo(dns_checks.DomainIP(domain))
+	t.Printf("IP: ")
+	d.Printf("%s\n", ipInfoData.IP)
+	t.Printf("Hostname: ")
+	d.Printf("%s\n", ipInfoData.Hostname)
+	t.Printf("City: ")
+	d.Printf("%s\n", ipInfoData.City)
+	t.Printf("Region: ")
+	d.Printf("%s\n", ipInfoData.Region)
+	t.Printf("Country: ")
+	d.Printf("%s\n", ipInfoData.Country)
+	t.Printf("Location: ")
+	d.Printf("%s\n", ipInfoData.Loc)
+	t.Printf("Organization: ")
+	d.Printf("%s\n", ipInfoData.Org)
+	t.Printf("Postal: ")
+	d.Printf("%s\n", ipInfoData.Postal)
+	t.Printf("Timezone: ")
+	d.Printf("%s\n", ipInfoData.Timezone)
+	_, _ = y.Printf("__________________")
 
 	// NS Records
 	_, _ = t.Println("NS Records")
 	fmt.Println()
-	_, _ = y.Printf("%s\n", strings.Join(dns_checks.NsLookup(domain), "\n"))
+	_, _ = d.Printf("%s\n", strings.Join(dns_checks.NsLookup(domain), "\n"))
 	_, _ = y.Println("__________________")
 
 	// MX Records
@@ -89,7 +106,7 @@ func main() {
 	_, _ = t.Println("TXT Records")
 	fmt.Println()
 	for _, txt := range dns_checks.TxtCheck(domain) {
-		_, _ = y.Printf("Record --> %s\n", txt)
+		_, _ = d.Printf("Record --> %s\n", txt)
 
 	}
 
@@ -153,7 +170,7 @@ func cloudflareCheck(domain string) (bool, string) {
 
 		resuls := dns_checks.IpInfo(prefixedDomainIP)
 
-		if strings.Contains(resuls, "Cloudflare") {
+		if strings.Contains(resuls.Org, "Cloudflare") {
 			_, _ = e.Println("Unable to obtain real IP")
 			_, _ = e.Println("Mail cname is also pointed to Cloudfalre")
 		} else {
@@ -191,26 +208,16 @@ func checkOpenPortsWrapper(domain string) {
 	case "y":
 		fmt.Println("__________________")
 		_, _ = t.Println("Checking Server Default ports")
-		// portStatus := dns_checks.CheckOpenPorts(dns_checks.DomainIP(domain))
-		// for port, status := range portStatus {
-		// 	_, _ = y.Printf("%d\t%s\n", port, status)
-		// }
+
 		dns_checks.PortChecker(domain)
-		// portStatus := dns_checks.CheckOpenPorts(dns_checks.DomainIP(domain))
-		// for port, status := range portStatus {
-		// 	if status == "Open" {
-		// 		_, _ = g.Printf("%d\t%s\n", port, status)
-		// 	} else {
-		// 		_, _ = t.Printf("%d\t%s\n", port, status)
-		// 	}
-		// }
+
 	case "n":
 		_, _ = d.Println("Terminating script")
-		_, _ = d.Println("Bye Bye")
+		_, _ = d.Println("See you next time!")
 	default:
 		_, _ = d.Println("Nothing was selected or input was invalid")
 		_, _ = d.Println("Terminating script")
-		_, _ = d.Println("Bye Bye")
+		_, _ = d.Println("See you next time!")
 
 	}
 

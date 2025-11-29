@@ -19,6 +19,7 @@ func HelpFunc(input string) {
 		"whois data check",
 		"domain get real ip if Cloudflare is used",
 		"run nmap with -n or -nmap flags",
+		"single port check with -sp or --single-port flags",
 	}
 
 	_, _ = y.Println()

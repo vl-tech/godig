@@ -6,7 +6,7 @@ import (
 )
 
 func RdapInfo(domain string) error {
-	y := color.New(color.FgYellow, color.Bold)
+	y := color.New(color.FgHiGreen, color.Bold)
 	r := color.New(color.FgRed, color.Bold)
 
 	client := &rdap.Client{}
