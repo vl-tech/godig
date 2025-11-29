@@ -82,7 +82,7 @@ func main() {
 	d.Printf("%s\n", ipInfoData.Postal)
 	t.Printf("Timezone: ")
 	d.Printf("%s\n", ipInfoData.Timezone)
-	_, _ = y.Printf("__________________")
+	_, _ = y.Println("__________________")
 
 	// NS Records
 	_, _ = t.Println("NS Records")
