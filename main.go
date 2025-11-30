@@ -54,7 +54,7 @@ func main() {
 	_, _ = d.Println("IP: ", dns_checks.DomainIP(domain))
 	_, _ = y.Println("__________________")
 
-	// // CMS Detection
+	// CMS Detection
 	// _, _ = t.Println("CMS Detection:")
 	// cms := dns_checks.DetectCMS(domain)
 	// _, _ = d.Println("Detected CMS:", cms)

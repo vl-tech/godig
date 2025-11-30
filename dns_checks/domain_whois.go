@@ -18,15 +18,13 @@ func WhoisDomain(domain string) error {
 		fmt.Printf("No Whois data for Domain %s Error: %v\n ", domain, err)
 	}
 
-	if info.Domain != nil {
-	_, _ = y.Println("Domain:", info.Domain.Domain)
-	_, _ = y.Println("Created:", info.Domain.CreatedDate)
-	_, _ = y.Println("Expires:", info.Domain.ExpirationDate)
-	_, _ = y.Println("Name Servers:", info.Domain.NameServers)
-	_, _ = y.Println("Status:", info.Domain.Status)
-	}
 	if info.Registrar != nil {
-	_, _ = y.Println("Registrar Name:", info.Registrar.Name)
+		_, _ = y.Println("Domain:", info.Domain.Domain)
+		_, _ = y.Println("Created:", info.Domain.CreatedDate)
+		_, _ = y.Println("Expires:", info.Domain.ExpirationDate)
+		_, _ = y.Println("Name Servers:", info.Domain.NameServers)
+		_, _ = y.Println("Status:", info.Domain.Status)
+		_, _ = y.Println("Registrar Name:", info.Registrar.Name)
 	}
 	return nil
 }
