@@ -3,10 +3,16 @@ package dns_checks
 import (
 	"fmt"
 	"net"
+	"strings"
 )
 
 func NsLookup(domain string) []string {
-
+	if strings.Contains(domain, "mail") {
+		domain = strings.Replace(domain, "mail.", "", 1)
+		if len(strings.Split(domain, ".")) > 2 {
+			domain = strings.Join(strings.Split(domain, ".")[1:], ".")
+		}
+	}
 	listNS := []string{}
 	nsData, err := net.LookupNS(domain)
 	if err != nil {

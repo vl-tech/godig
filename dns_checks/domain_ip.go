@@ -2,10 +2,16 @@ package dns_checks
 
 import (
 	"net"
-	"os"
 
 	"github.com/fatih/color"
 )
+
+// DomainResolves checks if a domain can be resolved without printing errors
+// Returns true if domain resolves, false otherwise
+func DomainResolves(domain string) bool {
+	_, err := net.LookupIP(domain)
+	return err == nil
+}
 
 func DomainIP(domain string) string {
 	e := color.New(color.FgRed, color.Bold)
@@ -15,8 +21,6 @@ func DomainIP(domain string) string {
 		// Print error to stderr and return empty string
 		// _, _ = e.Fprintf(os.Stderr, "Unable to parse data %s\n", err)
 		e.Printf("Unable to parse data:  %s\n", err)
-		RdapInfo(domain)
-		os.Exit(0)
 		return ""
 
 	}

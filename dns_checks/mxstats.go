@@ -3,6 +3,7 @@ package dns_checks
 import (
 	"fmt"
 	"net"
+	"strings"
 )
 
 type MxStats struct {
@@ -11,6 +12,12 @@ type MxStats struct {
 }
 
 func MxLookup(domain string) []MxStats {
+	if strings.Contains(domain, "mail") {
+		domain = strings.Replace(domain, "mail.", "", 1)
+		if len(strings.Split(domain, ".")) > 2 {
+			domain = strings.Join(strings.Split(domain, ".")[1:], ".")
+		}
+	}
 	mxData, err := net.LookupMX(domain)
 	if err != nil {
 		fmt.Println("MX Error", err)

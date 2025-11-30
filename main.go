@@ -17,6 +17,7 @@ var (
 	t         = color.New(color.BgBlack, color.FgHiMagenta, color.Italic, color.Bold)
 	y         = color.New(color.FgYellow, color.Bold)
 	startTime = time.Now()
+	r         = color.New(color.BgHiRed, color.FgWhite, color.Bold)
 )
 
 func main() {
@@ -28,6 +29,10 @@ func main() {
 		os.Exit(0)
 	} else if os.Args[1] == "-nmap" || os.Args[1] == "-n" {
 		domain = dns_checks.CleanDomain(os.Args[2])
+		if !dns_checks.DomainResolves(domain) {
+			_, _ = e.Printf("Error: Domain '%s' does not resolve. Cannot continue.\n", domain)
+			os.Exit(1)
+		}
 		ip := dns_checks.DomainIP(domain)
 		y.Println("__________________")
 		// CheckPortsWrapper(domain) --- IGNORE ---
@@ -38,6 +43,10 @@ func main() {
 	} else if len(os.Args) > 1 && os.Args[1] == "-sp" || os.Args[1] == "--single-port" {
 		requqestedPort := os.Args[3]
 		domain = dns_checks.CleanDomain(os.Args[2])
+		if !dns_checks.DomainResolves(domain) {
+			_, _ = r.Printf("Error: Domain '%s' does not resolve. Cannot continue.\n", domain)
+			os.Exit(1)
+		}
 		ip := dns_checks.DomainIP(domain)
 		y.Println("__________________")
 		t.Printf("Checking Port %s\n", requqestedPort)
@@ -45,6 +54,15 @@ func main() {
 		os.Exit(0)
 	} else {
 		domain = dns_checks.CleanDomain(os.Args[1])
+	}
+
+	// Pre-check: verify domain resolves before continuing
+	if !dns_checks.DomainResolves(domain) {
+		_, _ = r.Printf("Error: Domain '%s' does not resolve. Cannot continue.\n", domain)
+		_, _ = t.Println("Attempting to fetch RDAP/Whois data anyway...")
+
+		_ = dns_checks.RdapInfo(domain)
+		os.Exit(1)
 	}
 
 	fmt.Println()
