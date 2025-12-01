@@ -103,13 +103,13 @@ func main() {
 	_, _ = y.Println("__________________")
 
 	// NS Records
-	_, _ = t.Println("NS Records")
+	_, _ = t.Println("NS Records:")
 	fmt.Println()
 	_, _ = d.Printf("%s\n", strings.Join(dns_checks.NsLookup(domain), "\n"))
 	_, _ = y.Println("__________________")
 
 	// MX Records
-	_, _ = t.Println("MX Records")
+	_, _ = t.Println("MX Records:")
 	fmt.Println()
 	for i, mx := range dns_checks.MxLookup(domain) {
 		_, _ = d.Printf("%d. Host: %s Priority: %d\n", i+1, mx.Host, mx.Prio)
@@ -121,7 +121,7 @@ func main() {
 
 	// TXT Records
 	_, _ = y.Println("__________________")
-	_, _ = t.Println("TXT Records")
+	_, _ = t.Println("TXT Records:")
 	fmt.Println()
 	for _, txt := range dns_checks.TxtCheck(domain) {
 		_, _ = d.Printf("Record --> %s\n", txt)
@@ -130,14 +130,14 @@ func main() {
 
 	// SSL Check
 	_, _ = y.Println("__________________")
-	_, _ = t.Println("SSL Check")
+	_, _ = t.Println("SSL Check:")
 	err := dns_checks.VerifySSL(domain)
 	if err != nil {
 		_, _ = e.Println(err)
 	}
 	// Rdap/Whois info
 	_, _ = y.Println("__________________")
-	_, _ = t.Println("Domain Rdap Data")
+	_, _ = t.Println("Domain Rdap Data:")
 	if err := dns_checks.RdapInfo(domain); err != nil {
 		_, _ = e.Println(err)
 	}

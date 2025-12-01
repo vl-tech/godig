@@ -10,11 +10,14 @@ import (
 func RdapInfo(domain string) error {
 	y := color.New(color.FgHiGreen, color.Bold)
 	r := color.New(color.FgRed, color.Bold)
-	if strings.Contains(domain, "mail") {
-		domain = strings.Replace(domain, "mail.", "", 1)
-		if len(strings.Split(domain, ".")) > 2 {
-			domain = strings.Join(strings.Split(domain, ".")[1:], ".")
-		}
+	// if strings.Contains(domain, "mail") {
+	// 	domain = strings.Replace(domain, "mail.", "", 1)
+	// 	if len(strings.Split(domain, ".")) > 2 {
+	// 		domain = strings.Join(strings.Split(domain, ".")[1:], ".")
+	// 	}
+	// }
+	if strings.Contains(domain, "mail") || len(strings.Split(domain, ".")) > 2 {
+		domain = strings.Join(strings.Split(domain, ".")[1:], ".")
 	}
 	client := &rdap.Client{}
 	// dataList was introduced previously but not used; omit it to avoid ineffassign
@@ -41,6 +44,7 @@ func RdapInfo(domain string) error {
 		_, _ = y.Printf("Registrar: %s [%s %s]\n", domainInfo.Entities[2].VCard.Name(), domainInfo.Entities[2].VCard.Locality(), domainInfo.Entities[2].VCard.Region())
 	}
 	nsData := domainInfo.Nameservers
+	t.Println("NS Data:")
 	for i := range nsData {
 		_, _ = y.Printf("%s\n", nsData[i].LDHName)
 	}
