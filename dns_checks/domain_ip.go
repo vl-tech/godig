@@ -14,6 +14,7 @@ func DomainResolves(domain string) bool {
 }
 
 func DomainIP(domain string) string {
+	var ipAddresses []string
 	e := color.New(color.FgRed, color.Bold)
 	ips, err := net.LookupIP(domain)
 
@@ -25,7 +26,7 @@ func DomainIP(domain string) string {
 
 	}
 	for _, ip := range ips {
-		return ip.String()
+		ipAddresses = append(ipAddresses, ip.String())
 	}
-	return ""
+	return ipAddresses[0]
 }
