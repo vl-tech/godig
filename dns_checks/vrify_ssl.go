@@ -40,7 +40,6 @@ func VerifySSL(domain string) error {
 	}
 
 	cert := state.PeerCertificates[0]
-	_, _ = y.Printf("Issuer: %s\nExpiry: %v\n", cert.Issuer, cert.NotAfter.Format(time.RFC850))
-
+	_, _ = y.Printf("Issuer: %s\nExpiry: %v\nSignature Algorithm: %v\n", cert.Issuer, cert.NotAfter.Format(time.RFC850), cert.SignatureAlgorithm)
 	return nil
 }

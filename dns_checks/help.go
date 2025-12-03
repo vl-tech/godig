@@ -6,7 +6,7 @@ import (
 	"github.com/fatih/color"
 )
 
-func HelpFunc(input string) {
+func HelpFunc() {
 	title := color.New(color.FgHiCyan, color.Bold)
 	cmd := color.New(color.FgHiGreen, color.Bold)
 	desc := color.New(color.FgYellow)
@@ -28,6 +28,10 @@ func HelpFunc(input string) {
 	desc.Println("Scan common ports on the domain")
 	cmd.Print("  -sp, --single-port <domain> <port>  ")
 	desc.Println("Check a specific port")
+	cmd.Print("  -ssl <domain>           ")
+	desc.Println("Check SSL certificate validity")
+	cmd.Print("  -rdap <domain>          ")
+	desc.Println("Fetch RDAP and WHOIS domain information")
 	fmt.Println()
 
 	section.Println("FEATURES:")

@@ -51,8 +51,10 @@ USAGE:
 
 OPTIONS:
   -h, --help              Display this help message
-  -n, -nmap <domain>      Scan common ports on the domain
-  -sp, --single-port <domain> <port>  Check a specific port
+  -n, -nmap      <domain> Scan common ports on the domain
+  -sp, --single-port      <domain> <port>  Check a specific port
+  -ssl                    SSL Check:
+  -rdap                   Rdap and Whois domain information check
 
 FEATURES:
   • IP Address Resolution
@@ -69,7 +71,7 @@ FEATURES:
   • Port Scanning
 
 EXAMPLES:
-  domain_analyzer example.com              Full analysis of example.com
+  domain_analyzer example.com             Full analysis of example.com
   domain_analyzer https://example.com     URL is automatically parsed to domain
   domain_analyzer -n example.com          Port scan example.com
   domain_analyzer -sp example.com 443     Check port 443 on example.com

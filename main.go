@@ -3,11 +3,12 @@ package main
 import (
 	"domain_analyzer/dns_checks"
 	"fmt"
+	"github.com/fatih/color"
 	"os"
+	"slices"
+	"strconv"
 	"strings"
 	"time"
-
-	"github.com/fatih/color"
 )
 
 var (
@@ -17,31 +18,19 @@ var (
 	t         = color.New(color.BgBlack, color.FgHiMagenta, color.Italic, color.Bold)
 	y         = color.New(color.FgYellow, color.Bold)
 	startTime = time.Now()
-	r         = color.New(color.BgHiRed, color.FgWhite, color.Bold)
+	r         = color.New(color.FgRed, color.Bold)
+	argSlice  = []string{"--help", "-h", "--h", "-nmap", "-n", "-sp", "--single-port", "-ssl", "-rdap", domain}
 )
 
 func main() {
+
 	if len(os.Args) < 2 {
-		dns_checks.HelpFunc("")
+		dns_checks.HelpFunc()
 		os.Exit(0)
 	} else if len(os.Args) == 2 && os.Args[1] == "--help" || os.Args[1] == "-h" || os.Args[1] == "--h" {
-		dns_checks.HelpFunc(os.Args[1])
+		dns_checks.HelpFunc()
 		os.Exit(0)
-	} else if os.Args[1] == "-nmap" || os.Args[1] == "-n" {
-		domain = dns_checks.CleanDomain(os.Args[2])
-		if !dns_checks.DomainResolves(domain) {
-			_, _ = e.Printf("Error: Domain '%s' does not resolve. Cannot continue.\n", domain)
-			os.Exit(1)
-		}
-		ip := dns_checks.DomainIP(domain)
-		y.Println("__________________")
-		// CheckPortsWrapper(domain) --- IGNORE ---
-		_, _ = t.Println("Checking Server Default ports")
-		dns_checks.PortChecker(ip)
-		os.Exit(0)
-
-	} else if len(os.Args) > 1 && os.Args[1] == "-sp" || os.Args[1] == "--single-port" {
-		requqestedPort := os.Args[3]
+	} else if os.Args[1] == "-nmap" || os.Args[1] == "-n" && len(os.Args) > 2 {
 		domain = dns_checks.CleanDomain(os.Args[2])
 		if !dns_checks.DomainResolves(domain) {
 			_, _ = r.Printf("Error: Domain '%s' does not resolve. Cannot continue.\n", domain)
@@ -49,13 +38,61 @@ func main() {
 		}
 		ip := dns_checks.DomainIP(domain)
 		y.Println("__________________")
-		t.Printf("Checking Port %s\n", requqestedPort)
-		dns_checks.SinglePortCheck(ip, requqestedPort)
+		// CheckPortsWrapper(domain) --- IGNORE ---
+		_, _ = t.Println("Checking Server Default ports")
+		fmt.Println()
+		dns_checks.PortChecker(ip)
+		os.Exit(0)
+
+	} else if len(os.Args) > 1 && os.Args[1] == "-sp" || os.Args[1] == "--single-port" {
+		requqestedPort := os.Args[3]
+		requqestedPortint, err := strconv.Atoi(requqestedPort)
+		if err != nil || (requqestedPortint < 1 || requqestedPortint > 65535) {
+
+			r.Printf("Invalid Port: %v\n", requqestedPort)
+			os.Exit(1)
+		}
+		domain = dns_checks.CleanDomain(os.Args[2])
+		if !dns_checks.DomainResolves(domain) {
+			_, _ = r.Printf("Error: Domain '%s' does not resolve. Cannot continue.\n", domain)
+			os.Exit(1)
+		}
+		ip := dns_checks.DomainIP(domain)
+		y.Println("__________________")
+		t.Printf("Checking Port %d\n", requqestedPortint)
+		dns_checks.SinglePortCheck(ip, requqestedPortint)
+		os.Exit(0)
+	} else if len(os.Args) > 1 && os.Args[1] == "-ssl" {
+		domain = dns_checks.CleanDomain(os.Args[2])
+		y.Println("__________________")
+		t.Println("Checking SSL Validity")
+		err := dns_checks.VerifySSL(domain)
+		if err != nil {
+			_, _ = e.Println(err)
+		}
+		os.Exit(0)
+	} else if len(os.Args) > 1 && os.Args[1] == "-rdap" {
+		domain = dns_checks.CleanDomain(os.Args[2])
+		y.Println("__________________")
+		t.Println("Fetching RDAP/Whois Data")
+		err := dns_checks.RdapInfo(domain)
+		if err != nil {
+			_, _ = e.Println(err)
+		}
+		os.Exit(0)
+
+	} else if !slices.Contains(argSlice, os.Args[1]) && os.Args[1][0] == '-' {
+		t.Println("=======> Unknown argument detected <=======")
+		dns_checks.HelpFunc()
+		os.Exit(0)
+
+	} else if slices.Contains(argSlice, os.Args[1]) && len(os.Args) < 3{
+		t.Println("=======> Missing domain argument <=======")
+		dns_checks.HelpFunc()
 		os.Exit(0)
 	} else {
 		domain = dns_checks.CleanDomain(os.Args[1])
 	}
-
 	// Pre-check: verify domain resolves before continuing
 	if !dns_checks.DomainResolves(domain) {
 		_, _ = r.Printf("Error: Domain '%s' does not resolve. Cannot continue.\n", domain)
