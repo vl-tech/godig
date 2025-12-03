@@ -40,6 +40,24 @@ func VerifySSL(domain string) error {
 	}
 
 	cert := state.PeerCertificates[0]
-	_, _ = y.Printf("Issuer: %s\nExpiry: %v\nSignature Algorithm: %v\n", cert.Issuer, cert.NotAfter.Format(time.RFC850), cert.SignatureAlgorithm)
+
+	// Calculate validity duration and days remaining
+	totalValidity := cert.NotAfter.Sub(cert.NotBefore)
+	totalDays := int(totalValidity.Hours() / 24)
+	daysRemaining := int(time.Until(cert.NotAfter).Hours() / 24)
+
+	t.Println("SSL Certificate Information:")
+	y.Println("Provider", cert.Issuer)
+	y.Println("Issued To: ", cert.Subject.CommonName)
+	y.Println("Installed On: ", cert.NotBefore.Day(), cert.NotBefore.Month(), cert.NotBefore.Weekday(), cert.NotBefore.Year())
+	y.Println("Expiring On: ", cert.NotAfter.Day(), cert.NotAfter.Month(), cert.NotAfter.Weekday(), cert.NotAfter.Year())
+	y.Printf("Total Validity: %d days\n", totalDays)
+	if daysRemaining < 0 {
+		y.Printf("Status: EXPIRED (%d days ago)\n", -daysRemaining)
+	} else if daysRemaining < 30 {
+		y.Printf("Days Remaining: %d (EXPIRING SOON!)\n", daysRemaining)
+	} else {
+		y.Printf("Days Remaining: %d\n", daysRemaining)
+	}
 	return nil
 }
