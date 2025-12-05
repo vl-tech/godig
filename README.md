@@ -55,6 +55,7 @@ OPTIONS:
   -sp, --single-port      <domain> <port>  Check a specific port
   -ssl                    SSL Check:
   -rdap                   Rdap and Whois domain information check
+  -lc, --license-check    cPanel License check
 
 FEATURES:
   • IP Address Resolution
@@ -75,6 +76,9 @@ EXAMPLES:
   domain_analyzer https://example.com     URL is automatically parsed to domain
   domain_analyzer -n example.com          Port scan example.com
   domain_analyzer -sp example.com 443     Check port 443 on example.com
+  domain_analyzer -ssl example.com       Check SSL certificate of example.com
+  domain_analyzer -rdap example.com      Retrieve RDAP/WHOIS info for example.com
+  domain_analyzer -lc 192.168.1.1        Check cPanel/WHM license status on given IP
 
 NOTE:
   URLs with http:// or https:// prefixes are automatically stripped.

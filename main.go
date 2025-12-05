@@ -81,12 +81,16 @@ func main() {
 		}
 		os.Exit(0)
 
+	} else if len(os.Args) > 1 && os.Args[1] == "-lc" || os.Args[1] == "--license-check" {
+		ip := os.Args[2]
+		dns_checks.CheckLicense(ip)
+		os.Exit(0)
 	} else if !slices.Contains(argSlice, os.Args[1]) && os.Args[1][0] == '-' {
 		t.Println("=======> Unknown argument detected <=======")
 		dns_checks.HelpFunc()
 		os.Exit(0)
 
-	} else if slices.Contains(argSlice, os.Args[1]) && len(os.Args) < 3{
+	} else if slices.Contains(argSlice, os.Args[1]) && len(os.Args) < 3 {
 		t.Println("=======> Missing domain argument <=======")
 		dns_checks.HelpFunc()
 		os.Exit(0)
