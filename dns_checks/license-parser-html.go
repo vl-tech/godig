@@ -58,9 +58,14 @@ func CheckLicense(ip string) {
 	}
 
 	// --- Output ---
-	// var buf bytes.Buffer
+	dre := regexp.MustCompile(`^[1-9]+$`)
 	for _, text := range results {
-		// _, _ = y.Fprintln(&buf, "\\___", text)
+		digitMatches := dre.FindAllStringSubmatch(text, -1)
+		if len(digitMatches) > 0 && text != ip {
+			fmt.Printf("\033[1;31mLicense Number: %s\033[0m\n", text)
+			continue
+		}
+
 		g.Printf("%s\n", text)
 	}
 
