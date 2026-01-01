@@ -5,6 +5,16 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
+
+	"github.com/fatih/color"
+)
+
+var (
+	d         = color.New(color.FgHiGreen, color.Bold)
+	e         = color.New(color.BgHiMagenta, color.FgYellow, color.Bold)
+	y         = color.New(color.FgYellow, color.Bold)
+	startTime = time.Now()
 )
 
 type IpInfoDataStruct struct {
@@ -20,7 +30,7 @@ type IpInfoDataStruct struct {
 	Readme   string `json:"readme"`
 }
 
-func IpInfo(ip string) IpInfoDataStruct {
+func IpInfo(ip string) {
 	ipinfoBase := "https://ipinfo.io/"
 	url := ipinfoBase + ip
 	resp, err := http.Get(url)
@@ -36,5 +46,29 @@ func IpInfo(ip string) IpInfoDataStruct {
 	if err != nil {
 		r.Println(err)
 	}
-	return ipInfoData
+	t.Printf("IP: ")
+	d.Printf("%s\n", ipInfoData.IP)
+
+	if ipInfoData.Hostname != "" {
+		t.Printf("Hostname: ")
+		d.Println(ipInfoData.Hostname)
+	} else {
+		t.Printf("%s:", "Hostname")
+		r.Printf("%s\n", "Not Found!")
+	}
+
+	t.Printf("City: ")
+	d.Printf("%s\n", ipInfoData.City)
+	t.Printf("Region: ")
+	d.Printf("%s\n", ipInfoData.Region)
+	t.Printf("Country: ")
+	d.Printf("%s\n", ipInfoData.Country)
+	t.Printf("Location: ")
+	d.Printf("%s\n", ipInfoData.Loc)
+	t.Printf("Organization: ")
+	d.Printf("%s\n", ipInfoData.Org)
+	t.Printf("Postal: ")
+	d.Printf("%s\n", ipInfoData.Postal)
+	t.Printf("Timezone: ")
+	d.Printf("%s\n", ipInfoData.Timezone)
 }

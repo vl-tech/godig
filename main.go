@@ -19,7 +19,7 @@ var (
 	y         = color.New(color.FgYellow, color.Bold)
 	startTime = time.Now()
 	r         = color.New(color.FgRed, color.Bold)
-	argSlice  = []string{"--help", "-h", "--h", "-nmap", "-n", "-sp", "--single-port", "-ssl", "-rdap", domain}
+	argSlice  = []string{"--help", "-h", "--h", "-nmap", "-n", "-sp", "--single-port", "-ssl", "-rdap", "-ip", domain}
 )
 
 func main() {
@@ -41,7 +41,12 @@ func main() {
 		// CheckPortsWrapper(domain) --- IGNORE ---
 		_, _ = t.Println("Checking Server Default ports")
 		fmt.Println()
-		dns_checks.PortChecker(ip)
+		dns_checks.PortChecker(ip[0])
+		os.Exit(0)
+
+	} else if len(os.Args) > 1 && os.Args[1] == "-ip" {
+		ip := os.Args[2]
+		dns_checks.IpInfo(ip)
 		os.Exit(0)
 
 	} else if len(os.Args) > 1 && os.Args[1] == "-sp" || os.Args[1] == "--single-port" {
@@ -60,7 +65,7 @@ func main() {
 		ip := dns_checks.DomainIP(domain)
 		y.Println("__________________")
 		t.Printf("Checking Port %d\n", requqestedPortint)
-		dns_checks.SinglePortCheck(ip, requqestedPortint)
+		dns_checks.SinglePortCheck(ip[0], requqestedPortint)
 		os.Exit(0)
 	} else if len(os.Args) > 1 && os.Args[1] == "-ssl" {
 		domain = dns_checks.CleanDomain(os.Args[2])
@@ -110,8 +115,17 @@ func main() {
 	seParator := "\t\t\t\t************* DNS INFO *************"
 	_, _ = e.Println(seParator)
 	fmt.Println()
-	_, _ = d.Println("IP: ", dns_checks.DomainIP(domain))
-	_, _ = y.Println("__________________")
+	if cap(dns_checks.DomainIP(domain)) == 1 {
+		_, _ = d.Println("IP: ", dns_checks.DomainIP(domain))
+		_, _ = y.Println("__________________")
+	} else {
+		_, _ = t.Println("Domain has multiple IP's: ")
+		y.Println("__________________")
+		for _, ipAddr := range dns_checks.DomainIP(domain) {
+			d.Printf("%s\n", ipAddr)
+		}
+		_, _ = y.Println("__________________")
+	}
 
 	// CMS Detection
 	// _, _ = t.Println("CMS Detection:")
@@ -121,27 +135,8 @@ func main() {
 
 	// IP Info data
 	_, _ = t.Println("IP Info Data: ")
-	fmt.Println()
-	ipInfoData := dns_checks.IpInfo(dns_checks.DomainIP(domain))
-	t.Printf("IP: ")
-	d.Printf("%s\n", ipInfoData.IP)
-	t.Printf("Hostname: ")
-	d.Printf("%s\n", ipInfoData.Hostname)
-	t.Printf("City: ")
-	d.Printf("%s\n", ipInfoData.City)
-	t.Printf("Region: ")
-	d.Printf("%s\n", ipInfoData.Region)
-	t.Printf("Country: ")
-	d.Printf("%s\n", ipInfoData.Country)
-	t.Printf("Location: ")
-	d.Printf("%s\n", ipInfoData.Loc)
-	t.Printf("Organization: ")
-	d.Printf("%s\n", ipInfoData.Org)
-	t.Printf("Postal: ")
-	d.Printf("%s\n", ipInfoData.Postal)
-	t.Printf("Timezone: ")
-	d.Printf("%s\n", ipInfoData.Timezone)
-	_, _ = y.Println("__________________")
+	y.Println(strings.Repeat("_", 18))
+	dns_checks.IpInfo(dns_checks.DomainIP(domain)[0])
 
 	// NS Records
 	_, _ = t.Println("NS Records:")
@@ -158,7 +153,7 @@ func main() {
 
 	//PTR Records
 	_, _ = y.Println("__________________")
-	_, _ = d.Println("PTR: ", dns_checks.ReverseLookup(dns_checks.DomainIP(domain)))
+	_, _ = d.Println("PTR: ", dns_checks.ReverseLookup(dns_checks.DomainIP(domain)[0]))
 
 	// TXT Records
 	_, _ = y.Println("__________________")
@@ -193,7 +188,7 @@ func main() {
 	_, realIP := cloudflareCheck(domain)
 	if realIP == "" {
 		if !strings.Contains(domain, "mail.") {
-			realIP = dns_checks.DomainIP(domain)
+			realIP = dns_checks.DomainIP(domain)[0]
 			checkOpenPortsWrapper(realIP)
 		} else {
 			_, _ = d.Println("Mail subdomain does not exist, skipping open ports check")
@@ -206,19 +201,20 @@ func main() {
 	_, _ = t.Printf("Script elapsed time is: %v\n", elapsedTime)
 }
 
+// ############### Cloudflare Check Function ##################
 func cloudflareCheck(domain string) (bool, string) {
 	var prefixedDomain string
 	var prefixedDomainIP string
 	var baseDomain string
 
 	if strings.Contains(domain, "mail.") {
-		prefixedDomainIP = dns_checks.DomainIP(domain)
+		prefixedDomainIP = dns_checks.DomainIP(domain)[0]
 		prefixedDomain = domain
 		baseDomain = strings.TrimPrefix(domain, "mail.")
 	} else {
 		baseDomain = domain
 		prefixedDomain = "mail" + "." + domain
-		prefixedDomainIP = dns_checks.DomainIP(prefixedDomain)
+		prefixedDomainIP = dns_checks.DomainIP(prefixedDomain)[0]
 	}
 	realIP := prefixedDomainIP
 	if len(dns_checks.NsLookup(baseDomain)) < 1 {
@@ -227,9 +223,9 @@ func cloudflareCheck(domain string) (bool, string) {
 		_, _ = t.Println("Domain is using Cloudfalre")
 		_, _ = t.Println("Trying to obtain real IP from mail cName")
 
-		resuls := dns_checks.IpInfo(prefixedDomainIP)
+		results := dns_checks.NsLookup(domain)
 
-		if strings.Contains(resuls.Org, "Cloudflare") {
+		if strings.Contains(results[0], "Cloudflare") {
 			_, _ = e.Println("Unable to obtain real IP")
 			_, _ = e.Println("Mail cname is also pointed to Cloudfalre")
 		} else {
@@ -241,7 +237,7 @@ func cloudflareCheck(domain string) (bool, string) {
 			// cPanel/WHM License check
 			_, _ = y.Println("__________________")
 			_, _ = t.Println("cPanel License check")
-			dns_checks.CheckLicense(dns_checks.DomainIP(prefixedDomain))
+			dns_checks.CheckLicense(dns_checks.DomainIP(prefixedDomain)[0])
 		}
 		return true, realIP
 	} else {
@@ -249,7 +245,7 @@ func cloudflareCheck(domain string) (bool, string) {
 		// cPanel/WHM License check
 		_, _ = y.Println("__________________")
 		_, _ = t.Println("cPanel License check")
-		dns_checks.CheckLicense(dns_checks.DomainIP(prefixedDomain))
+		dns_checks.CheckLicense(dns_checks.DomainIP(prefixedDomain)[0])
 		return false, realIP
 	}
 	return false, ""

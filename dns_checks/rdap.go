@@ -39,9 +39,10 @@ func RdapInfo(domain string) error {
 		_, _ = y.Println("Domain : ", event.Action, event.Date)
 	}
 	if len(domainInfo.Entities) < 3 {
+
 		_, _ = r.Println("Registrar: ", domainInfo.Entities[0].VCard.Name())
 	} else {
-		_, _ = y.Printf("Registrar: %s [%s %s]\n", domainInfo.Entities[2].VCard.Name(), domainInfo.Entities[2].VCard.Locality(), domainInfo.Entities[2].VCard.Region())
+		_, _ = y.Printf("Registrar: %s [%s %s]\n", domainInfo.Entities[3].VCard.Name(), domainInfo.Entities[3].VCard.Locality(), domainInfo.Entities[3].VCard.Region())
 	}
 	nsData := domainInfo.Nameservers
 	t.Println("NS Data:")

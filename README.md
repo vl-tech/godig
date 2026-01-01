@@ -56,6 +56,7 @@ OPTIONS:
   -ssl                    SSL Check:
   -rdap                   Rdap and Whois domain information check
   -lc, --license-check    cPanel License check
+  -ip,                    Check ip info
 
 FEATURES:
   • IP Address Resolution
@@ -79,6 +80,7 @@ EXAMPLES:
   domain_analyzer -ssl example.com       Check SSL certificate of example.com
   domain_analyzer -rdap example.com      Retrieve RDAP/WHOIS info for example.com
   domain_analyzer -lc 192.168.1.1        Check cPanel/WHM license status on given IP
+  domain_analyzer -ip 142.250.187.110    Check IP info from ipinfo.io (142.250.187.110 google IP)
 
 NOTE:
   URLs with http:// or https:// prefixes are automatically stripped.
