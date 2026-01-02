@@ -3,72 +3,102 @@ package main
 import (
 	"domain_analyzer/dns_checks"
 	"fmt"
-	"github.com/fatih/color"
 	"os"
-	"slices"
-	"strconv"
 	"strings"
 	"time"
+
+	"github.com/fatih/color"
+	"github.com/pborman/getopt/v2"
 )
 
 var (
-	domain    string
 	d         = color.New(color.FgHiGreen, color.Bold)
 	e         = color.New(color.BgHiMagenta, color.FgYellow, color.Bold)
 	t         = color.New(color.BgBlack, color.FgHiMagenta, color.Italic, color.Bold)
 	y         = color.New(color.FgYellow, color.Bold)
 	startTime = time.Now()
 	r         = color.New(color.FgRed, color.Bold)
-	argSlice  = []string{"--help", "-h", "--h", "-nmap", "-n", "-sp", "--single-port", "-ssl", "-rdap", "-ip", domain}
 )
 
 func main() {
+	// Define flags
+	help := getopt.BoolLong("help", 'h', "Show help")
+	nmapMode := getopt.BoolLong("nmap", 'n', "Run nmap port scan on domain")
+	ipInfo := getopt.BoolLong("ip", 'i', "Get IP information")
+	singlePort := getopt.IntLong("single-port", 's', 0, "Check single port on domain")
+	sslCheck := getopt.BoolLong("ssl", 0, "Verify SSL certificate")
+	rdapCheck := getopt.BoolLong("rdap", 'r', "Get RDAP/Whois information")
+	licenseCheck := getopt.BoolLong("license-check", 'l', "Check cPanel license for IP")
 
-	if len(os.Args) < 2 {
+	getopt.Parse()
+
+	// Handle help flag
+	if *help || len(os.Args) == 1 {
 		dns_checks.HelpFunc()
-		os.Exit(0)
-	} else if len(os.Args) == 2 && os.Args[1] == "--help" || os.Args[1] == "-h" || os.Args[1] == "--h" {
-		dns_checks.HelpFunc()
-		os.Exit(0)
-	} else if os.Args[1] == "-nmap" || os.Args[1] == "-n" && len(os.Args) > 2 {
-		domain = dns_checks.CleanDomain(os.Args[2])
+		return
+	}
+
+	args := getopt.Args()
+
+	// Handle nmap mode
+	if *nmapMode {
+		if len(args) < 1 {
+			_, _ = r.Println("Error: -nmap/-n requires a domain argument")
+			os.Exit(1)
+		}
+		domain := dns_checks.CleanDomain(args[0])
 		if !dns_checks.DomainResolves(domain) {
 			_, _ = r.Printf("Error: Domain '%s' does not resolve. Cannot continue.\n", domain)
 			os.Exit(1)
 		}
 		ip := dns_checks.DomainIP(domain)
 		y.Println("__________________")
-		// CheckPortsWrapper(domain) --- IGNORE ---
 		_, _ = t.Println("Checking Server Default ports")
 		fmt.Println()
 		dns_checks.PortChecker(ip[0])
 		os.Exit(0)
+	}
 
-	} else if len(os.Args) > 1 && os.Args[1] == "-ip" {
-		ip := os.Args[2]
-		dns_checks.IpInfo(ip)
-		os.Exit(0)
-
-	} else if len(os.Args) > 1 && os.Args[1] == "-sp" || os.Args[1] == "--single-port" {
-		requqestedPort := os.Args[3]
-		requqestedPortint, err := strconv.Atoi(requqestedPort)
-		if err != nil || (requqestedPortint < 1 || requqestedPortint > 65535) {
-
-			r.Printf("Invalid Port: %v\n", requqestedPort)
+	// Handle IP info mode
+	if *ipInfo {
+		if len(args) < 1 {
+			_, _ = r.Println("Error: -ip/-i requires an IP address argument")
 			os.Exit(1)
 		}
-		domain = dns_checks.CleanDomain(os.Args[2])
+		ip := args[0]
+		dns_checks.IpInfo(ip)
+		os.Exit(0)
+	}
+
+	// Handle single port check
+	if *singlePort > 0 {
+		if len(args) < 1 {
+			_, _ = r.Println("Error: -single-port/-s requires a domain argument")
+			os.Exit(1)
+		}
+		if *singlePort < 1 || *singlePort > 65535 {
+			r.Printf("Invalid Port: %d\n", *singlePort)
+			os.Exit(1)
+		}
+		domain := dns_checks.CleanDomain(args[0])
 		if !dns_checks.DomainResolves(domain) {
 			_, _ = r.Printf("Error: Domain '%s' does not resolve. Cannot continue.\n", domain)
 			os.Exit(1)
 		}
 		ip := dns_checks.DomainIP(domain)
 		y.Println("__________________")
-		t.Printf("Checking Port %d\n", requqestedPortint)
-		dns_checks.SinglePortCheck(ip[0], requqestedPortint)
+		t.Printf("Checking Port %d\n", *singlePort)
+		dns_checks.SinglePortCheck(ip[0], *singlePort)
 		os.Exit(0)
-	} else if len(os.Args) > 1 && os.Args[1] == "-ssl" {
-		domain = dns_checks.CleanDomain(os.Args[2])
+	}
+
+	// Handle SSL check
+	if *sslCheck {
+		if len(args) < 1 {
+			_, _ = r.Println("Error: -ssl requires a domain argument")
+			os.Exit(1)
+		}
+		domain := dns_checks.CleanDomain(args[0])
 		y.Println("__________________")
 		t.Println("Checking SSL Validity")
 		err := dns_checks.VerifySSL(domain)
@@ -76,8 +106,15 @@ func main() {
 			_, _ = e.Println(err)
 		}
 		os.Exit(0)
-	} else if len(os.Args) > 1 && os.Args[1] == "-rdap" {
-		domain = dns_checks.CleanDomain(os.Args[2])
+	}
+
+	// Handle RDAP check
+	if *rdapCheck {
+		if len(args) < 1 {
+			_, _ = r.Println("Error: -rdap/-r requires a domain argument")
+			os.Exit(1)
+		}
+		domain := dns_checks.CleanDomain(args[0])
 		y.Println("__________________")
 		t.Println("Fetching RDAP/Whois Data")
 		err := dns_checks.RdapInfo(domain)
@@ -85,23 +122,28 @@ func main() {
 			_, _ = e.Println(err)
 		}
 		os.Exit(0)
+	}
 
-	} else if len(os.Args) > 1 && os.Args[1] == "-lc" || os.Args[1] == "--license-check" {
-		ip := os.Args[2]
+	// Handle license check
+	if *licenseCheck {
+		if len(args) < 1 {
+			_, _ = r.Println("Error: -license-check/-l requires an IP address argument")
+			os.Exit(1)
+		}
+		ip := args[0]
 		dns_checks.CheckLicense(ip)
 		os.Exit(0)
-	} else if !slices.Contains(argSlice, os.Args[1]) && os.Args[1][0] == '-' {
-		t.Println("=======> Unknown argument detected <=======")
-		dns_checks.HelpFunc()
-		os.Exit(0)
-
-	} else if slices.Contains(argSlice, os.Args[1]) && len(os.Args) < 3 {
-		t.Println("=======> Missing domain argument <=======")
-		dns_checks.HelpFunc()
-		os.Exit(0)
-	} else {
-		domain = dns_checks.CleanDomain(os.Args[1])
 	}
+
+	// Default behavior: full domain analysis
+	if len(args) < 1 {
+		_, _ = r.Println("Error: Domain argument required")
+		dns_checks.HelpFunc()
+		os.Exit(1)
+	}
+
+	domain := dns_checks.CleanDomain(args[0])
+
 	// Pre-check: verify domain resolves before continuing
 	if !dns_checks.DomainResolves(domain) {
 		_, _ = r.Printf("Error: Domain '%s' does not resolve. Cannot continue.\n", domain)
@@ -126,12 +168,6 @@ func main() {
 		}
 		_, _ = y.Println("__________________")
 	}
-
-	// CMS Detection
-	// _, _ = t.Println("CMS Detection:")
-	// cms := dns_checks.DetectCMS(domain)
-	// _, _ = d.Println("Detected CMS:", cms)
-	// _, _ = y.Println("__________________")
 
 	// IP Info data
 	_, _ = t.Println("IP Info Data: ")
@@ -182,19 +218,16 @@ func main() {
 
 	// Cloudfalre Check and obtain real IP
 	_, _ = y.Println("__________________")
-	// cloudflareCheck(domain)
-	// Open Ports Check
-	_, _ = y.Println("__________________")
-	_, realIP := cloudflareCheck(domain)
+	_, realIP := cloudflareCheckOpt(domain)
 	if realIP == "" {
 		if !strings.Contains(domain, "mail.") {
 			realIP = dns_checks.DomainIP(domain)[0]
-			checkOpenPortsWrapper(realIP)
+			checkOpenPortsWrapperOpt(realIP)
 		} else {
 			_, _ = d.Println("Mail subdomain does not exist, skipping open ports check")
 		}
 	} else {
-		checkOpenPortsWrapper(realIP)
+		checkOpenPortsWrapperOpt(realIP)
 	}
 	// Script elapsed time
 	elapsedTime := time.Since(startTime)
@@ -202,7 +235,7 @@ func main() {
 }
 
 // ############### Cloudflare Check Function ##################
-func cloudflareCheck(domain string) (bool, string) {
+func cloudflareCheckOpt(domain string) (bool, string) {
 	var prefixedDomain string
 	var prefixedDomainIP string
 	var baseDomain string
@@ -251,7 +284,7 @@ func cloudflareCheck(domain string) (bool, string) {
 	return false, ""
 }
 
-func checkOpenPortsWrapper(domain string) {
+func checkOpenPortsWrapperOpt(domain string) {
 	// Open Ports Check
 	_, _ = y.Println("__________________")
 	var choice string

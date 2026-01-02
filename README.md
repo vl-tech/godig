@@ -34,12 +34,12 @@ mv domain_analyzer.exe dig.exe
 ## Example Usage.
 - Single port check
 ```bash
-./domain_analyzer -sp ip_addr/domain port
+./domain_analyzer -s 443 example.com
 ```
 
 - Default cPanel port check
 ```bash
-./domain_analyzer -nmap ip_addr/domain port
+./domain_analyzer -n example.com
 ```
 ## Usage
 ```bash
@@ -50,13 +50,13 @@ USAGE:
   domain_analyzer [OPTIONS] <domain> [ARGS]   Run specific checks
 
 OPTIONS:
-  -h, --help              Display this help message
-  -n, -nmap      <domain> Scan common ports on the domain
-  -sp, --single-port      <domain> <port>  Check a specific port
-  -ssl                    SSL Check:
-  -rdap                   Rdap and Whois domain information check
-  -lc, --license-check    cPanel License check
-  -ip,                    Check ip info
+  -h, --help              Show help
+  -i, --ip <IP>           Get IP information
+  -l, --license-check <IP> Check cPanel license for IP
+  -n, --nmap <domain>     Run nmap port scan on domain
+  -r, --rdap <domain>     Get RDAP/Whois information
+  -s, --single-port=<port> <domain>  Check single port on domain
+  --ssl <domain>          Verify SSL certificate
 
 FEATURES:
   • IP Address Resolution
@@ -76,11 +76,11 @@ EXAMPLES:
   domain_analyzer example.com             Full analysis of example.com
   domain_analyzer https://example.com     URL is automatically parsed to domain
   domain_analyzer -n example.com          Port scan example.com
-  domain_analyzer -sp example.com 443     Check port 443 on example.com
-  domain_analyzer -ssl example.com       Check SSL certificate of example.com
-  domain_analyzer -rdap example.com      Retrieve RDAP/WHOIS info for example.com
-  domain_analyzer -lc 192.168.1.1        Check cPanel/WHM license status on given IP
-  domain_analyzer -ip 142.250.187.110    Check IP info from ipinfo.io (142.250.187.110 google IP)
+  domain_analyzer -s 443 example.com      Check port 443 on example.com
+  domain_analyzer -i 142.250.187.110      Check IP info from ipinfo.io (142.250.187.110 google IP)
+  domain_analyzer -l 192.168.1.1          Check cPanel/WHM license status on given IP
+  domain_analyzer --ssl example.com       Verify SSL certificate of example.com
+  domain_analyzer -r example.com          Retrieve RDAP/WHOIS info for example.com
 
 NOTE:
   URLs with http:// or https:// prefixes are automatically stripped.

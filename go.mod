@@ -7,6 +7,7 @@ require (
 	github.com/likexian/whois v1.15.6
 	github.com/likexian/whois-parser v1.24.20
 	github.com/openrdap/rdap v0.9.1
+	github.com/pborman/getopt/v2 v2.1.0
 )
 
 require (
