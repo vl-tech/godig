@@ -25,10 +25,12 @@ func main() {
 	help := getopt.BoolLong("help", 'h', "Show help")
 	nmapMode := getopt.BoolLong("nmap", 'n', "Run nmap port scan on domain")
 	ipInfo := getopt.BoolLong("ip", 'i', "Get IP information")
-	singlePort := getopt.IntLong("single-port", 's', 0, "Check single port on domain")
+	singlePort := getopt.IntLong("port", 'p', 0, "Check single port on domain")
 	sslCheck := getopt.BoolLong("ssl", 0, "Verify SSL certificate")
 	rdapCheck := getopt.BoolLong("rdap", 'r', "Get RDAP/Whois information")
 	licenseCheck := getopt.BoolLong("license-check", 'l', "Check cPanel license for IP")
+	ptrrecordCheck := getopt.BoolLong("ptr", 'x', "PTR record check ")
+	arecordCheck := getopt.Bool('a', "Check A record")
 
 	getopt.Parse()
 
@@ -99,8 +101,7 @@ func main() {
 			os.Exit(1)
 		}
 		domain := dns_checks.CleanDomain(args[0])
-		y.Println("__________________")
-		t.Println("Checking SSL Validity")
+		fmt.Println()
 		err := dns_checks.VerifySSL(domain)
 		if err != nil {
 			_, _ = e.Println(err)
@@ -134,6 +135,39 @@ func main() {
 		dns_checks.CheckLicense(ip)
 		os.Exit(0)
 	}
+	// Handle PTR record check
+	if *ptrrecordCheck {
+		if len(args) < 1 {
+			_, _ = r.Println("Error PTR Record check failed. Please use -x <IP>.")
+			os.Exit(1)
+		}
+		ip := args[0]
+		ptr := dns_checks.ReverseLookup(ip)
+		t.Printf("PTR Check: \n \\__ ")
+		_, _ = d.Println(ptr)
+		os.Exit(0)
+	}
+
+	// Handle A record check.
+	if *arecordCheck {
+		if len(os.Args) < 1 {
+			_, _ = r.Println("Error: A record Check failed. Please use -a <domain>")
+			os.Exit(1)
+		}
+		domain := args[0]
+		ip := dns_checks.DomainIP(domain)
+		if cap(ip) == 1 {
+			t.Printf("A record Check: \n \\__ ")
+			_, _ = d.Println(strings.Join(ip, ""))
+			os.Exit(0)
+		} else {
+			t.Printf("A record Check:\n")
+			y.Println(strings.Repeat("_", len("A record Check")))
+			_, _ = d.Println(strings.Join(ip, "\n"))
+			os.Exit(0)
+		}
+
+	}
 
 	// Default behavior: full domain analysis
 	if len(args) < 1 {
@@ -158,31 +192,34 @@ func main() {
 	_, _ = e.Println(seParator)
 	fmt.Println()
 	if cap(dns_checks.DomainIP(domain)) == 1 {
-		_, _ = d.Println("IP: ", dns_checks.DomainIP(domain))
-		_, _ = y.Println("__________________")
+		_, _ = d.Println("IP: ", strings.Join(dns_checks.DomainIP(domain), ""))
+		// _, _ = y.Println("__________________")
 	} else {
 		_, _ = t.Println("Domain has multiple IP's: ")
-		y.Println("__________________")
+		y.Println(strings.Repeat("_", len("Domain has multiple IP's:")))
 		for _, ipAddr := range dns_checks.DomainIP(domain) {
 			d.Printf("%s\n", ipAddr)
 		}
-		_, _ = y.Println("__________________")
+		_, _ = y.Println()
 	}
 
 	// IP Info data
-	_, _ = t.Println("IP Info Data: ")
-	y.Println(strings.Repeat("_", 18))
+	_, _ = t.Println("IP Info Data:")
+	y.Println(strings.Repeat("_", len("IP Info Data:")))
 	dns_checks.IpInfo(dns_checks.DomainIP(domain)[0])
-
+	fmt.Println()
 	// NS Records
 	_, _ = t.Println("NS Records:")
-	fmt.Println()
+	y.Println(strings.Repeat("-", len("NS Records:")))
+
 	_, _ = d.Printf("%s\n", strings.Join(dns_checks.NsLookup(domain), "\n"))
-	_, _ = y.Println("__________________")
+	_, _ = y.Println()
+	y.Println(strings.Repeat("-", len("MX Records:")))
 
 	// MX Records
 	_, _ = t.Println("MX Records:")
-	fmt.Println()
+	y.Println(strings.Repeat("-", len("MX Records:")))
+
 	for i, mx := range dns_checks.MxLookup(domain) {
 		_, _ = d.Printf("%d. Host: %s Priority: %d\n", i+1, mx.Host, mx.Prio)
 	}
@@ -201,9 +238,9 @@ func main() {
 	}
 
 	// SSL Check
-	_, _ = y.Println("__________________")
-	_, _ = t.Println("SSL Check:")
+	y.Println(strings.Repeat("_", len("SSL Certificate Information:")))
 	err := dns_checks.VerifySSL(domain)
+
 	if err != nil {
 		_, _ = e.Println(err)
 	}
@@ -213,8 +250,6 @@ func main() {
 	if err := dns_checks.RdapInfo(domain); err != nil {
 		_, _ = e.Println(err)
 	}
-
-	_, _ = y.Println("__________________")
 
 	// Cloudfalre Check and obtain real IP
 	_, _ = y.Println("__________________")
