@@ -2,13 +2,15 @@ package dns_checks
 
 import (
 	"fmt"
-	"github.com/fatih/color"
 	"net"
 	"sort"
+	"strconv"
+	"strings"
+
+	"github.com/fatih/color"
 )
 
 var (
-	port_list   = []int{22, 21, 25, 53, 2525, 993, 143, 995, 110, 587, 2087, 3306, 2083, 2096, 443, 80, 2078, 2079, 2086, 465, 8443, 8080, 5432}
 	portsChan   = make(chan int, 100)
 	resultsChan = make(chan int)
 	g           = color.New(color.FgHiGreen, color.Bold)
@@ -16,7 +18,8 @@ var (
 	r           = color.New(color.FgHiRed, color.Bold)
 )
 
-func PortChecker(ip string) {
+func PortChecker(ip string, port_list []int) {
+	// port_list = []int{22, 21, 25, 53, 2525, 993, 143, 995, 110, 587, 2087, 3306, 2083, 2096, 443, 80, 2078, 2079, 2086, 465, 8443, 8080, 5432}
 	var openPorts []int
 	var closedPorts []int
 
@@ -46,36 +49,26 @@ func PortChecker(ip string) {
 
 	sort.Ints(openPorts)
 	sort.Ints(closedPorts)
-	 t.Printf("%-15s %-15s\n", "Open Ports:", "Closed Ports:")
-	 maxLen := openPorts
-	 if len(closedPorts) > len(openPorts) {
-		 maxLen = closedPorts
-	 }
-	 for i := 0; i < len(maxLen); i++ {
-		 var openPortStr, closedPortStr string
-		 if i < len(openPorts) {
-			 openPortStr = g.Sprintf("%-15d", openPorts[i])
-		 } else {
-			 openPortStr = ""
-		 }
-		 if i < len(closedPorts) {
-			 closedPortStr = r.Sprintf("%-15d", closedPorts[i])
-		 } else {
-			 closedPortStr = ""
-		 }
-		 fmt.Printf("%-15s %-15s\n", openPortStr, closedPortStr)
-	 }
+	t.Printf("%-15s %-15s\n", "Open Ports:", "Closed Ports:")
+	maxLen := openPorts
+	if len(closedPorts) > len(openPorts) {
+		maxLen = closedPorts
+	}
+	for i := 0; i < len(maxLen); i++ {
+		var openPortStr, closedPortStr string
+		if i < len(openPorts) {
+			openPortStr = g.Sprintf("%-15d", openPorts[i])
+		} else {
+			openPortStr = ""
+		}
+		if i < len(closedPorts) {
+			closedPortStr = r.Sprintf("%-15d", closedPorts[i])
+		} else {
+			closedPortStr = ""
+		}
+		fmt.Printf("%-15s %-15s\n", openPortStr, closedPortStr)
+	}
 }
-// 	t.Println("Open Ports:")
-// 	for _, port := range openPorts {
-// 		g.Printf("%d\n", port)
-// 	}
-
-// 	t.Println("\nClosed Ports:")
-// 	for _, port := range closedPorts {
-// 		r.Printf("%d\n", port)
-// 	}
-// }
 
 func PortWorker(ports, results chan int, ip string) {
 
@@ -93,5 +86,19 @@ func PortWorker(ports, results chan int, ip string) {
 		conn.Close()
 		results <- port
 	}
+
+}
+
+func PortRange(args string) []int {
+	portList := strings.Split(args, ",")
+	var plist []int
+	for _, port := range portList {
+		intPort, err := strconv.Atoi(port)
+		if err != nil {
+			r.Println(err)
+		}
+		plist = append(plist, intPort)
+	}
+	return plist
 
 }

@@ -31,6 +31,11 @@ func main() {
 	licenseCheck := getopt.BoolLong("license-check", 'l', "Check cPanel license for IP")
 	ptrrecordCheck := getopt.BoolLong("ptr", 'x', "PTR record check ")
 	arecordCheck := getopt.Bool('a', "Check A record")
+	checkPortList := getopt.BoolLong("ports", 0, "Port list")
+	nsCheck := getopt.BoolLong("ns", 0, "NS record check")
+	mxCheck := getopt.BoolLong("mx", 'm', "MX record check")
+
+	// Parse command-line arguments
 
 	getopt.Parse()
 
@@ -41,7 +46,54 @@ func main() {
 	}
 
 	args := getopt.Args()
+	// Handle Port range argument list of ports comma separated
+	if *checkPortList {
+		if len(args) < 2 {
+			_, _ = r.Println("Error: --ports requires two arguments: <port-list> <domain/IP>")
+			_, _ = r.Println("Example: --ports 80,443,8080 example.com")
+			os.Exit(1)
+		}
+		y.Println("__________________")
+		t.Println("Port List Check Mode")
+		fmt.Println()
+		d.Printf("Target: %s\n", args[1])
+		d.Printf("Ports to check: %s\n", args[0])
+		y.Println("__________________")
+		fmt.Println()
+		plist := dns_checks.PortRange(args[0])
+		dns_checks.PortChecker(args[1], plist)
+		os.Exit(0)
+	}
+	// NS Only recordd check
+	if *nsCheck {
+		if len(args) < 1 {
+			_, _ = r.Println("Error: -ns requires a domain argument")
+			os.Exit(1)
+		}
 
+		domain := dns_checks.CleanDomain(args[0])
+		_, _ = t.Println("NS Records:")
+		y.Println(strings.Repeat("-", len("NS Records:")))
+		_, _ = d.Printf("%s\n", strings.Join(dns_checks.NsLookup(domain), "\n"))
+		_, _ = y.Println()
+		os.Exit(0)
+
+	}
+	// MX Only record check
+	if *mxCheck {
+		if len(args) < 1 {
+			_, _ = r.Println("Error: -m/--mx requires a domain argument")
+			os.Exit(1)
+		}
+		domain := dns_checks.CleanDomain(args[0])
+		_, _ = t.Println("MX Records:")
+		y.Println(strings.Repeat("-", len("MX Records:")))
+		for i, mx := range dns_checks.MxLookup(domain) {
+			_, _ = d.Printf("%d. Host: %s Priority: %d\n", i+1, mx.Host, mx.Prio)
+		}
+		_, _ = y.Println()
+		os.Exit(0)
+	}
 	// Handle nmap mode
 	if *nmapMode {
 		if len(args) < 1 {
@@ -57,7 +109,9 @@ func main() {
 		y.Println("__________________")
 		_, _ = t.Println("Checking Server Default ports")
 		fmt.Println()
-		dns_checks.PortChecker(ip[0])
+		port_list := []int{22, 21, 25, 53, 2525, 993, 143, 995, 110, 587, 2087, 3306, 2083, 2096, 443, 80, 2078, 2079, 2086, 465, 8443, 8080, 5432}
+
+		dns_checks.PortChecker(ip[0], port_list)
 		os.Exit(0)
 	}
 
@@ -276,24 +330,36 @@ func cloudflareCheckOpt(domain string) (bool, string) {
 	var baseDomain string
 
 	if strings.Contains(domain, "mail.") {
-		prefixedDomainIP = dns_checks.DomainIP(domain)[0]
+		domainIPs := dns_checks.DomainIP(domain)
+		if len(domainIPs) == 0 {
+			_, _ = e.Printf("Unable to resolve domain: %s\n", domain)
+			return false, ""
+		}
+		prefixedDomainIP = domainIPs[0]
 		prefixedDomain = domain
 		baseDomain = strings.TrimPrefix(domain, "mail.")
 	} else {
 		baseDomain = domain
 		prefixedDomain = "mail" + "." + domain
-		prefixedDomainIP = dns_checks.DomainIP(prefixedDomain)[0]
+		mailIPs := dns_checks.DomainIP(prefixedDomain)
+		if len(mailIPs) == 0 {
+			_, _ = r.Printf("Unable to resolve mail subdomain: %s\n", prefixedDomain)
+			_, _ = r.Println("Skipping Cloudflare check and license verification")
+			return false, ""
+		}
+		prefixedDomainIP = mailIPs[0]
 	}
 	realIP := prefixedDomainIP
-	if len(dns_checks.NsLookup(baseDomain)) < 1 {
+	nsRecords := dns_checks.NsLookup(baseDomain)
+	if len(nsRecords) < 1 {
 		_, _ = e.Println("Domain has no NS records")
-	} else if strings.Contains(dns_checks.NsLookup(baseDomain)[0], "cloudflare.com") {
+	} else if strings.Contains(nsRecords[0], "cloudflare.com") {
 		_, _ = t.Println("Domain is using Cloudfalre")
 		_, _ = t.Println("Trying to obtain real IP from mail cName")
 
 		results := dns_checks.NsLookup(domain)
 
-		if strings.Contains(results[0], "Cloudflare") {
+		if len(results) > 0 && strings.Contains(results[0], "Cloudflare") {
 			_, _ = e.Println("Unable to obtain real IP")
 			_, _ = e.Println("Mail cname is also pointed to Cloudfalre")
 		} else {
@@ -305,7 +371,10 @@ func cloudflareCheckOpt(domain string) (bool, string) {
 			// cPanel/WHM License check
 			_, _ = y.Println("__________________")
 			_, _ = t.Println("cPanel License check")
-			dns_checks.CheckLicense(dns_checks.DomainIP(prefixedDomain)[0])
+			licenseIPs := dns_checks.DomainIP(prefixedDomain)
+			if len(licenseIPs) > 0 {
+				dns_checks.CheckLicense(licenseIPs[0])
+			}
 		}
 		return true, realIP
 	} else {
@@ -313,7 +382,10 @@ func cloudflareCheckOpt(domain string) (bool, string) {
 		// cPanel/WHM License check
 		_, _ = y.Println("__________________")
 		_, _ = t.Println("cPanel License check")
-		dns_checks.CheckLicense(dns_checks.DomainIP(prefixedDomain)[0])
+		licenseIPs := dns_checks.DomainIP(prefixedDomain)
+		if len(licenseIPs) > 0 {
+			dns_checks.CheckLicense(licenseIPs[0])
+		}
 		return false, realIP
 	}
 	return false, ""
@@ -331,8 +403,8 @@ func checkOpenPortsWrapperOpt(domain string) {
 	case "y":
 		fmt.Println("__________________")
 		_, _ = t.Println("Checking Server Default ports")
-
-		dns_checks.PortChecker(domain)
+		port_list := []int{22, 21, 25, 53, 2525, 993, 143, 995, 110, 587, 2087, 3306, 2083, 2096, 443, 80, 2078, 2079, 2086, 465, 8443, 8080, 5432}
+		dns_checks.PortChecker(domain, port_list)
 
 	case "n":
 		_, _ = d.Println("Terminating script")

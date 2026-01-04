@@ -54,8 +54,11 @@ OPTIONS:
   -a <domain>             Check A record for domain
   -i, --ip <IP>           Get IP information
   -l, --license-check <IP> Check cPanel license for IP
+  -m, --mx <domain>       Check MX records for domain
   -n, --nmap <domain>     Run nmap port scan on domain
+  --ns <domain>           Check NS records for domain
   -p, --port=<port> <domain>  Check single port on domain
+  --ports <port-list> <domain/IP>  Check specific ports (comma-separated)
   -r, --rdap <domain>     Get RDAP/Whois information
   -x, --ptr <IP>          PTR (reverse DNS) record check
   --ssl <domain>          Verify SSL certificate
@@ -78,8 +81,11 @@ EXAMPLES:
   domain_analyzer example.com             Full analysis of example.com
   domain_analyzer https://example.com     URL is automatically parsed to domain
   domain_analyzer -a example.com          Check A record for example.com
+  domain_analyzer -m example.com          Check MX records for example.com
+  domain_analyzer --ns example.com        Check NS records for example.com
   domain_analyzer -n example.com          Port scan example.com
   domain_analyzer -p 443 example.com      Check port 443 on example.com
+  domain_analyzer --ports 80,443,8080 example.com  Check specific ports on example.com
   domain_analyzer -x 142.250.187.110      Check PTR record for IP 142.250.187.110
   domain_analyzer -i 142.250.187.110      Check IP info from ipinfo.io (142.250.187.110 google IP)
   domain_analyzer -l 192.168.1.1          Check cPanel/WHM license status on given IP
