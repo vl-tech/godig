@@ -58,12 +58,9 @@ func HelpFunc() {
 	cmd.Printf("  --ssl <domain>\n\t \\__ ")
 	desc.Println("Verify SSL certificate")
 	fmt.Println()
-
-	section.Println("FEATURES:")
-	fmt.Println("  • IP Address Resolution")
-	fmt.Println("  • MX Records Lookup")
-	fmt.Println("  • TXT Records Lookup")
-	fmt.Println("  • NS Records Lookup")
+	cmd.Printf("  -d, --dns <domain> <dns-server>\n\t \\__ ")
+	desc.Println("Query domain using custom DNS resolver")
+	fmt.Println()
 	fmt.Println("  • CNAME Records Lookup")
 	fmt.Println("  • IP Info (Geolocation, ISP, etc.)")
 	fmt.Println("  • PTR (Reverse DNS) Lookup")
@@ -101,10 +98,8 @@ func HelpFunc() {
 	desc.Println("Verify SSL certificate of example.com")
 	cmd.Print("  domain_analyzer   -r example.com                   ")
 	desc.Println("Retrieve RDAP/WHOIS info for example.com")
-	fmt.Println()
-
-	section.Println("NOTE:")
-	desc.Println("  URLs with http:// or https:// prefixes are automatically stripped.")
+	cmd.Print("  domain_analyzer   -d example.com 8.8.8.8           ")
+	desc.Println("Query example.com using Google DNS (8.8.8.8)")
 	desc.Println("  You can enter either 'example.com' or 'https://example.com'.")
 	fmt.Println()
 }

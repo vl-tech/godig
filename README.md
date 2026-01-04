@@ -62,6 +62,7 @@ OPTIONS:
   -r, --rdap <domain>     Get RDAP/Whois information
   -x, --ptr <IP>          PTR (reverse DNS) record check
   --ssl <domain>          Verify SSL certificate
+  -d, --dns <domain> <dns-server>  Query domain using custom DNS resolver
 
 FEATURES:
   • IP Address Resolution
@@ -76,6 +77,7 @@ FEATURES:
   • Cloudflare Detection & Real IP Discovery
   • cPanel License Check
   • Port Scanning
+  • Custom DNS Resolver Support
 
 EXAMPLES:
   domain_analyzer example.com             Full analysis of example.com
@@ -91,6 +93,8 @@ EXAMPLES:
   domain_analyzer -l 192.168.1.1          Check cPanel/WHM license status on given IP
   domain_analyzer --ssl example.com       Verify SSL certificate of example.com
   domain_analyzer -r example.com          Retrieve RDAP/WHOIS info for example.com
+  domain_analyzer -d example.com 8.8.8.8  Query example.com using Google DNS (8.8.8.8)
+  domain_analyzer -d example.com 1.1.1.1  Query example.com using Cloudflare DNS (1.1.1.1)
 
 NOTE:
   URLs with http:// or https:// prefixes are automatically stripped.

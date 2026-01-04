@@ -34,6 +34,7 @@ func main() {
 	checkPortList := getopt.BoolLong("ports", 0, "Port list")
 	nsCheck := getopt.BoolLong("ns", 0, "NS record check")
 	mxCheck := getopt.BoolLong("mx", 'm', "MX record check")
+	customRes := getopt.BoolLong("dns", 'd', "Custom Dns Resolver ")
 
 	// Parse command-line arguments
 
@@ -63,6 +64,18 @@ func main() {
 		plist := dns_checks.PortRange(args[0])
 		dns_checks.PortChecker(args[1], plist)
 		os.Exit(0)
+	}
+	// Custom Dns resolver
+	if *customRes {
+		if len(args) < 1 {
+			_, _ = r.Println("Resolver argument must be --dns/-r")
+			os.Exit(1)
+		}
+		domain := dns_checks.CleanDomain(args[0])
+		resolver := args[1]
+		dns_checks.CustomDnsResolver(domain, resolver)
+		os.Exit(0)
+
 	}
 	// NS Only recordd check
 	if *nsCheck {
