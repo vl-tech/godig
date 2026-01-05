@@ -11,22 +11,24 @@ import (
 )
 
 var (
-	portsChan   = make(chan int, 100)
-	resultsChan = make(chan int)
-	g           = color.New(color.FgHiGreen, color.Bold)
-	t           = color.New(color.BgBlack, color.FgHiMagenta, color.Italic, color.Bold)
-	r           = color.New(color.FgHiRed, color.Bold)
+	g = color.New(color.FgHiGreen, color.Bold)
+	t = color.New(color.BgBlack, color.FgHiMagenta, color.Italic, color.Bold)
+	r = color.New(color.FgHiRed, color.Bold)
 )
 
+// PortChecker scans ports concurrently and displays open/closed results
 func PortChecker(ip string, port_list []int) {
-	// port_list = []int{22, 21, 25, 53, 2525, 993, 143, 995, 110, 587, 2087, 3306, 2083, 2096, 443, 80, 2078, 2079, 2086, 465, 8443, 8080, 5432}
+	const maxWorkerCount = 100
 	var openPorts []int
 	var closedPorts []int
-
+	portsChan := make(chan int, maxWorkerCount)
+	resultsChan := make(chan int)
+	// Start worker goroutines to check ports concurrently
 	for i := 0; i < cap(portsChan); i++ {
 		go PortWorker(portsChan, resultsChan, ip)
 	}
 
+	// Send ports to channel for workers to process
 	go func() {
 		for i := range port_list {
 			portsChan <- port_list[i]
@@ -43,9 +45,6 @@ func PortChecker(ip string, port_list []int) {
 		}
 
 	}
-
-	close(portsChan)
-	close(resultsChan)
 
 	sort.Ints(openPorts)
 	sort.Ints(closedPorts)
@@ -70,6 +69,7 @@ func PortChecker(ip string, port_list []int) {
 	}
 }
 
+// PortWorker checks if a port is open by attempting TCP connection
 func PortWorker(ports, results chan int, ip string) {
 
 	for port := range ports {
@@ -89,6 +89,7 @@ func PortWorker(ports, results chan int, ip string) {
 
 }
 
+// PortRange parses comma-separated port string into integer slice
 func PortRange(args string) []int {
 	portList := strings.Split(args, ",")
 	var plist []int
