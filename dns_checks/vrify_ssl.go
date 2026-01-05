@@ -48,24 +48,24 @@ func VerifySSL(domain string) error {
 	daysRemaining := int(time.Until(cert.NotAfter).Hours() / 24)
 
 	m.Printf("SSL Certificate Information: \n\\__\n")
-	m.Printf("   %-18s", "Provider:")
+	m.Printf("   %-18s", "|Provider:")
 	y.Printf("%v\n", cert.Issuer)
-	m.Printf("   %-18s", "Issued To:")
+	m.Printf("   %-18s", "|Issued To:")
 	y.Printf("%s\n", cert.Subject.CommonName)
-	m.Printf("   %-18s", "Installed On:")
+	m.Printf("   %-18s", "|Installed On:")
 	y.Printf("%d %s %s %d\n", cert.NotBefore.Day(), cert.NotBefore.Month(), cert.NotBefore.Weekday(), cert.NotBefore.Year())
-	m.Printf("   %-18s", "Expiring On:")
+	m.Printf("   %-18s", "|Expiring On:")
 	y.Printf("%d %s %s %d\n", cert.NotAfter.Day(), cert.NotAfter.Month(), cert.NotAfter.Weekday(), cert.NotAfter.Year())
-	m.Printf("   %-18s", "Total Validity:")
+	m.Printf("   %-18s", "|Total Validity:")
 	y.Printf("%d days\n", totalDays)
 	if daysRemaining < 0 {
-		m.Printf("   %-18s", "Status:")
-		y.Printf("EXPIRED (%d days ago)\n", -daysRemaining)
+		m.Printf("   %-18s", "|Status:")
+		y.Printf("|EXPIRED (%d days ago)\n", -daysRemaining)
 	} else if daysRemaining < 30 {
 		m.Printf("   %-18s", "Days Remaining:")
-		y.Printf("%d (EXPIRING SOON!)\n", daysRemaining)
+		y.Printf("%d (|EXPIRING SOON!)\n", daysRemaining)
 	} else {
-		m.Printf("   %-18s", "Days Remaining:")
+		m.Printf("   %-18s", "|Days Remaining:")
 		y.Printf("%d\n", daysRemaining)
 	}
 	return nil
