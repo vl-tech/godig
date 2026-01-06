@@ -23,10 +23,18 @@ Linux binary Size optimized
 ```bash
 go build -ldflags '-w -s'
 ```
-Windows Binary size optimized
+Windows Binary arm64/arm64/i386 etc. size optimized
 ```bash
 GOOS=windows GOARCH=amd64 go build -ldflags '-w -s'
 ```
+Use appropriate GOARCH value for your target architecture.
+You can list all available GOARCH values [here](https://golang.org/doc/install/source#environment).
+Or if you have Go installed, run:
+
+```bash
+go tool dist list
+```
+Rename Windows binary to dig.exe
 ```bash
 mv domain_analyzer.exe dig.exe
 ```
@@ -34,7 +42,7 @@ mv domain_analyzer.exe dig.exe
 ## Example Usage.
 - Single port check
 ```bash
-./domain_analyzer -s 443 example.com
+./domain_analyzer -p 443 example.com
 ```
 
 - Default cPanel port check
