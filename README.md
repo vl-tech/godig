@@ -58,19 +58,20 @@ USAGE:
   domain_analyzer [OPTIONS] <domain> [ARGS]   Run specific checks
 
 OPTIONS:
-  -h, --help              Show help
-  -a <domain>             Check A record for domain
-  -i, --ip <IP>           Get IP information
-  -l, --license-check <IP> Check cPanel license for IP
-  -m, --mx <domain>       Check MX records for domain
-  -n, --nmap <domain>     Run nmap port scan on domain
-  --ns <domain>           Check NS records for domain
-  -p, --port=<port> <domain>  Check single port on domain
-  --ports <port-list> <domain/IP>  Check specific ports (comma-separated)
-  -r, --rdap <domain>     Get RDAP/Whois information
-  -x, --ptr <IP>          PTR (reverse DNS) record check
-  --ssl <domain>          Verify SSL certificate
-  -d, --dns <domain> <dns-server>  Query domain using custom DNS resolver
+ -a                Check A record
+ -d, --dns         Custom Dns Resolver
+ -h, --help        Show help
+ -i, --ip          Get IP information
+ -l, --license-check
+                   Check cPanel license for IP
+ -m, --mx          MX record check
+ -n, --nmap        Run nmap port scan on domain
+     --ns          NS record check
+ -p, --port=value  Check single port on domain
+     --ports       Port list
+ -r, --rdap        Get RDAP/Whois information
+     --ssl         Verify SSL certificate
+ -x, --ptr         PTR record check
 
 FEATURES:
   • IP Address Resolution
@@ -88,23 +89,22 @@ FEATURES:
   • Custom DNS Resolver Support
 
 EXAMPLES:
-  domain_analyzer example.com             Full analysis of example.com
-  domain_analyzer https://example.com     URL is automatically parsed to domain
-  domain_analyzer -a example.com          Check A record for example.com
-  domain_analyzer -m example.com          Check MX records for example.com
-  domain_analyzer --ns example.com        Check NS records for example.com
-  domain_analyzer -n example.com          Port scan example.com
-  domain_analyzer -p 443 example.com      Check port 443 on example.com
+  domain_analyzer example.com                      Full analysis of example.com
+  domain_analyzer https://example.com              URL is automatically parsed to domain
+  domain_analyzer -a example.com                   Check A record for example.com
+  domain_analyzer -m example.com                   Check MX records for example.com
+  domain_analyzer -n example.com                   Port scan example.com
+  domain_analyzer --ns example.com                 Check NS records for example.com
+  domain_analyzer -p 443 example.com               Check port 443 on example.com
   domain_analyzer --ports 80,443,8080 example.com  Check specific ports on example.com
-  domain_analyzer -x 142.250.187.110      Check PTR record for IP 142.250.187.110
-  domain_analyzer -i 142.250.187.110      Check IP info from ipinfo.io (142.250.187.110 google IP)
-  domain_analyzer -l 192.168.1.1          Check cPanel/WHM license status on given IP
-  domain_analyzer --ssl example.com       Verify SSL certificate of example.com
-  domain_analyzer -r example.com          Retrieve RDAP/WHOIS info for example.com
-  domain_analyzer -d example.com 8.8.8.8  Query example.com using Google DNS (8.8.8.8)
-  domain_analyzer -d example.com 1.1.1.1  Query example.com using Cloudflare DNS (1.1.1.1)
+  domain_analyzer -x 142.250.187.110               Check PTR record for IP 142.250.187.110
+  domain_analyzer -i 142.250.187.110               Check IP info from ipinfo.io (142.250.187.110 google IP)
+  domain_analyzer -i myip                          Check IP your Public IP
+  domain_analyzer -l 192.168.1.1                   Check cPanel/WHM license status on given IP
+  domain_analyzer --ssl example.com                Verify SSL certificate of example.com
+  domain_analyzer -r example.com                   Retrieve RDAP/WHOIS info for example.com
+  domain_analyzer -d example.com 8.8.8.8           Query example.com using Google DNS (8.8.8.8)
 
 NOTE:
-  URLs with http:// or https:// prefixes are automatically stripped.
   You can enter either 'example.com' or 'https://example.com'.
 ```
