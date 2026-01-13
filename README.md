@@ -1,5 +1,5 @@
 
-<img src="media/dig-logo-new.jpeg" alt="App Logo" width="300" style="display:block; margin:auto;" />
+<img src="media/dig-logo-new.png" alt="App Logo" width="300" style="display:block; margin:auto;" />
 
 ## Golang Domain DNS analyzer.
  *Multi platform script for DNS checks.*
