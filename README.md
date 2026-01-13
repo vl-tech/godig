@@ -1,6 +1,7 @@
+<p align="center">
+  <img src="media/dig-logo-new.png" width="250">
+</p>
 
-![LOGO](media/dig-logo-new.png)
-</td></tr></table>
 ## Golang Domain DNS analyzer.
  *Multi platform script for DNS checks.*
  *Checks A,NS,MX,TXT, and SSL validity* 
