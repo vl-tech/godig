@@ -1,6 +1,6 @@
 
-<img src="media/dig-logo-new.png" alt="App Logo" width="300" style="display:block; margin:auto;" />
-
+![LOGO](media/dig-logo-new.png)
+</td></tr></table>
 ## Golang Domain DNS analyzer.
  *Multi platform script for DNS checks.*
  *Checks A,NS,MX,TXT, and SSL validity* 
