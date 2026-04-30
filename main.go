@@ -34,7 +34,9 @@ func main() {
 	checkPortList := getopt.BoolLong("ports", 0, "Port list")
 	nsCheck := getopt.BoolLong("ns", 0, "NS record check")
 	mxCheck := getopt.BoolLong("mx", 'm', "MX record check")
-	customRes := getopt.BoolLong("dns", 'd', "Custom Dns Resolver ")
+	customRes    := getopt.BoolLong("dns", 'd', "Custom Dns Resolver ")
+	cpanelOS     := getopt.BoolLong("cpanel-os", 'c', "List cPanel supported OS versions")
+	eolOnly      := getopt.BoolLong("eol", 0, "Show only EOL OS versions (use with --cpanel-os)")
 
 	// Parse command-line arguments
 
@@ -77,6 +79,16 @@ func main() {
 		os.Exit(0)
 
 	}
+	// cPanel OS versions check
+	if *cpanelOS {
+		filterFamily := ""
+		if len(args) > 0 {
+			filterFamily = args[0]
+		}
+		dns_checks.CpanelEolCsvData(filterFamily, *eolOnly)
+		os.Exit(0)
+	}
+
 	// NS Only recordd check
 	if *nsCheck {
 		if len(args) < 1 {

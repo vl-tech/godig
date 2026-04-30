@@ -63,6 +63,8 @@ USAGE:
 
 OPTIONS:
  -a                Check A record
+ -c, --cpanel-os   List cPanel supported OS versions
+     --eol         Show only EOL OS versions (use with --cpanel-os)
  -d, --dns         Custom Dns Resolver
  -h, --help        Show help
  -i, --ip          Get IP information
@@ -89,6 +91,7 @@ FEATURES:
   • RDAP/WHOIS Data Retrieval
   • Cloudflare Detection & Real IP Discovery
   • cPanel License Check
+  • cPanel Supported OS Versions Lookup (with EOL detection)
   • Port Scanning
   • Custom DNS Resolver Support
 
@@ -108,6 +111,10 @@ EXAMPLES:
   domain_analyzer --ssl example.com                Verify SSL certificate of example.com
   domain_analyzer -r example.com                   Retrieve RDAP/WHOIS info for example.com
   domain_analyzer -d example.com 8.8.8.8           Query example.com using Google DNS (8.8.8.8)
+  domain_analyzer --cpanel-os                      List all cPanel supported OS versions
+  domain_analyzer --cpanel-os Ubuntu               List cPanel OS versions for Ubuntu family
+  domain_analyzer --cpanel-os --eol                List only EOL OS versions
+  domain_analyzer -c CentOS --eol                  List EOL CentOS versions
 
 NOTE:
   You can enter either 'example.com' or 'https://example.com'.
