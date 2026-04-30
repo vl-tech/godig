@@ -5,16 +5,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"time"
-
-	"github.com/fatih/color"
-)
-
-var (
-	d         = color.New(color.FgHiGreen, color.Bold)
-	e         = color.New(color.BgHiMagenta, color.FgYellow, color.Bold)
-	y         = color.New(color.FgYellow, color.Bold)
-	startTime = time.Now()
 )
 
 type IpInfoDataStruct struct {

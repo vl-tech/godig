@@ -6,14 +6,6 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-
-	"github.com/fatih/color"
-)
-
-var (
-	g = color.New(color.FgHiGreen, color.Bold)
-	t = color.New(color.BgBlack, color.FgHiMagenta, color.Italic, color.Bold)
-	r = color.New(color.FgHiRed, color.Bold)
 )
 
 // PortChecker scans ports concurrently and displays open/closed results
