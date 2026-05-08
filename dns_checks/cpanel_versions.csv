@@ -1,19 +1,19 @@
 os_family,os_name,os_version,os_eol_date,cpanel_supported_version
 CentOS,CentOS 6,RHEL 6 base,2020-11-30,v86
-CentOS,CentOS 7,RHEL 7 base,2024-06-30,v110
+CentOS,CentOS 7,RHEL 7 base,2024-07-31,v110
 CentOS,CentOS 8,RHEL 8 base,2021-12-31,v102
 CloudLinux,CloudLinux 6,RHEL 6 base,2024-07-31,v110
-CloudLinux,CloudLinux 7,RHEL 7 base,2024-06-30,v110
+CloudLinux,CloudLinux 7,RHEL 7 base,2027-01-01,v110
 CloudLinux,CloudLinux 8,RHEL 8 base,2029-05-31,v110
-CloudLinux,CloudLinux 9,RHEL 9 base,2032-01-01,v114
-CloudLinux,CloudLinux 10,AlmaLinux 10 base,2035-01-01,
+CloudLinux,CloudLinux 9,RHEL 9 base,2032-05-31,v114
+CloudLinux,CloudLinux 10,AlmaLinux 10 base,2035-05-31,v134
 AlmaLinux,AlmaLinux 8,RHEL 8 compat,2029-03-01,v110
-AlmaLinux,AlmaLinux 9,RHEL 9 compat,2032-05-01,v114
-AlmaLinux,AlmaLinux 10,RHEL 10 compat,2035-01-01,
-Rocky Linux,Rocky Linux 8,RHEL 8 compat,2029-05-31,v110
-Rocky Linux,Rocky Linux 9,RHEL 9 compat,2032-01-01,v114
-RHEL,RHEL 7,,2024-06-30,v110
+AlmaLinux,AlmaLinux 9,RHEL 9 compat,2032-05-31,v114
+AlmaLinux,AlmaLinux 10,RHEL 10 compat,2035-05-31,v132
+Rocky Linux,Rocky Linux 8,RHEL 8 compat,2026-03-31,v110
+Rocky Linux,Rocky Linux 9,RHEL 9 compat,2026-03-31,v114
+RHEL,RHEL 7,,2024-07-31,v110
 RHEL,RHEL 8,,2029-05-31,v110
-Ubuntu,Ubuntu 20.04 LTS,Focal Fossa,2025-04-30,v102
-Ubuntu,Ubuntu 22.04 LTS,Jammy Jellyfish,2027-06-30,v102
-Ubuntu,Ubuntu 24.04 LTS,Noble Numbat,2029-04-01,v118
+Ubuntu,Ubuntu 20.04 LTS,Focal Fossa,2025-04-30,v118
+Ubuntu,Ubuntu 22.04 LTS,Jammy Jellyfish,2027-06-30,v134
+Ubuntu,Ubuntu 24.04 LTS,Noble Numbat,2029-04-01,v132
