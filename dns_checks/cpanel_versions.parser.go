@@ -77,9 +77,9 @@ func CpanelEolCsvData(filterFamily string, eolOnly bool) {
 		}
 
 		if v.isEOL() {
-			r.Printf("  %-28s %-18s EOL: %-12s  cPanel min: %s\n", v.OSName, v.OSVersion, eolDate, cpanelVer)
+			r.Printf("  %-28s %-18s EOL: %-12s  cPanel: %s\n", v.OSName, v.OSVersion, eolDate, cpanelVer)
 		} else {
-			g.Printf("  %-28s %-18s EOL: %-12s  cPanel min: %s\n", v.OSName, v.OSVersion, eolDate, cpanelVer)
+			g.Printf("  %-28s %-18s EOL: %-12s  cPanel: %s\n", v.OSName, v.OSVersion, eolDate, cpanelVer)
 		}
 	}
 	fmt.Println()
