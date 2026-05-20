@@ -305,6 +305,8 @@ func handleFullAnalysis(args []string) {
 	_, _ = y.Println("__________________")
 	_, _ = d.Println("PTR: ", dns_checks.ReverseLookup(ips[0]))
 
+	dns_checks.RblCheck(ips[0])
+
 	_, _ = y.Println("__________________")
 	_, _ = t.Println("TXT Records:")
 	fmt.Println()

@@ -23,12 +23,20 @@ var rblCheckURLs = map[string]string{
 }
 
 var spamhausReturnCodes = map[string]string{
-	"127.0.0.2":  "SBL — listed for spam activity",
-	"127.0.0.3":  "SBL CSS — spam-sending infrastructure (snowshoe/compromised)",
-	"127.0.0.4":  "XBL — exploited or infected machine (CBL)",
-	"127.0.0.9":  "SBL DROP — do not route or peer",
-	"127.0.0.10": "PBL — dynamic IP, not authorised for direct mail sending",
-	"127.0.0.11": "PBL — customer policy block",
+	"127.0.0.2":   "SBL — listed for spam activity",
+	"127.0.0.3":   "SBL CSS — spam-sending infrastructure (snowshoe/compromised)",
+	"127.0.0.4":   "XBL — exploited or infected machine (CBL)",
+	"127.0.0.9":   "SBL DROP — do not route or peer",
+	"127.0.0.10":  "PBL — dynamic IP, not authorised for direct mail sending",
+	"127.0.0.11":  "PBL — customer policy block",
+	"127.255.255.254": "Query refused — public resolver detected (e.g. WARP/1.1.1.1). Use a local recursive resolver.",
+	"127.255.255.255": "Query refused — unauthorised query source.",
+}
+
+// spamhausQueryErrors are return codes that indicate a resolver policy error, not a real listing.
+var spamhausQueryErrors = map[string]bool{
+	"127.255.255.254": true,
+	"127.255.255.255": true,
 }
 
 func decodeReturnCode(zone, code string) string {
@@ -81,6 +89,11 @@ func RblCheck(target string) {
 		addrs, err := net.LookupHost(reversed + "." + zone)
 		if err == nil && len(addrs) > 0 {
 			meaning := decodeReturnCode(zone, addrs[0])
+			if strings.Contains(zone, "spamhaus") && spamhausQueryErrors[addrs[0]] {
+				warn.Printf("SKIPPED %-30s", zone)
+				warn.Printf("  %s\n", meaning)
+				continue
+			}
 			bad.Printf("LISTED  %-30s", zone)
 			warn.Printf("  %s\n", meaning)
 
