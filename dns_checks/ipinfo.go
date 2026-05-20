@@ -20,6 +20,7 @@ type IpInfoDataStruct struct {
 	Readme   string `json:"readme"`
 }
 
+// IpInfo fetches and prints geolocation and org data for an IP from ipinfo.io
 func IpInfo(ip string) {
 	ipinfoBase := "https://ipinfo.io/"
 	url := ipinfoBase + ip

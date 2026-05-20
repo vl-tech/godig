@@ -9,6 +9,7 @@ import (
 	"strings"
 )
 
+// CheckLicense queries verify.cpanel.net and parses the HTML response to display license status for an IP
 func CheckLicense(ip string) {
 	licenseURL := "https://verify.cpanel.net/app/verify?ip=" + ip
 

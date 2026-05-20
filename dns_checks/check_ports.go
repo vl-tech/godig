@@ -9,6 +9,7 @@ import (
 
 var wg sync.WaitGroup
 
+// CheckOpenPorts scans a predefined list of common server ports and returns their open/closed status
 func CheckOpenPorts(ip string) map[int]string {
 
 	portStatuses := make(map[int]string)

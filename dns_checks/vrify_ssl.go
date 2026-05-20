@@ -9,6 +9,7 @@ import (
 	"github.com/fatih/color"
 )
 
+// VerifySSL connects to port 443 and prints certificate details including issuer, validity dates and days remaining
 func VerifySSL(domain string) error {
 	y := color.New(color.FgHiGreen, color.Bold)
 	m := color.New(color.FgHiMagenta, color.Bold)

@@ -19,6 +19,7 @@ type cpanelOSRecord struct {
 	SupportedVersion string
 }
 
+// isEOL returns true if the OS EOL date has already passed
 func (v cpanelOSRecord) isEOL() bool {
 	if v.EOLDate == "" {
 		return false
@@ -30,6 +31,7 @@ func (v cpanelOSRecord) isEOL() bool {
 	return parsed.Before(time.Now())
 }
 
+// loadCpanelVersions parses the embedded CSV into a slice of OS records
 func loadCpanelVersions() ([]cpanelOSRecord, error) {
 	reader := csv.NewReader(strings.NewReader(string(cpanelVersionsCSV)))
 	records, err := reader.ReadAll()
@@ -49,6 +51,7 @@ func loadCpanelVersions() ([]cpanelOSRecord, error) {
 	return versions, nil
 }
 
+// CpanelEolCsvData prints cPanel supported OS versions, optionally filtered by OS family or EOL status
 func CpanelEolCsvData(filterFamily string, eolOnly bool) {
 	versions, err := loadCpanelVersions()
 	if err != nil {

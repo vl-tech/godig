@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// NsLookup returns the NS records for a domain, stripping mail. prefix if present
 func NsLookup(domain string) []string {
 	if strings.Contains(domain, "mail") {
 		domain = strings.Replace(domain, "mail.", "", 1)

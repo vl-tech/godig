@@ -7,6 +7,7 @@ import (
 	whoisparser "github.com/likexian/whois-parser"
 )
 
+// WhoisDomain fetches and prints registrar, dates, nameservers and status via WHOIS
 func WhoisDomain(domain string) error {
 	y := color.New(color.FgYellow, color.Bold)
 	whois_raw, err := whois.Whois(domain)

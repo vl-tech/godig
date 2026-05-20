@@ -44,6 +44,7 @@ func main() {
 	cpanelOS       := getopt.BoolLong("cpanel-os", 'c', "List cPanel supported OS versions")
 	eolOnly        := getopt.BoolLong("eol", 0, "Show only EOL OS versions (use with --cpanel-os)")
 	txtrecord 	   := getopt.BoolLong("txt",0,"TXT Records check")
+	rblCheck       := getopt.BoolLong("rbl", 0, "Check IP against DNS blacklists (RBL)")
 
 	getopt.Parse()
 
@@ -73,6 +74,7 @@ func main() {
 	if *ptrrecordCheck { handlePTR(args) }
 	if *arecordCheck   { handleARecord(args) }
 	if *txtrecord      { handleTXTRecord(args) }
+	if *rblCheck       { handleRBL(args) }
 
 	handleFullAnalysis(args)
 }
@@ -241,6 +243,12 @@ func handleARecord(args []string) {
 		y.Println(strings.Repeat("_", len("A record Check")))
 		_, _ = d.Println(strings.Join(ip, "\n"))
 	}
+	os.Exit(0)
+}
+
+func handleRBL(args []string) {
+	requireArg(args, "--rbl")
+	dns_checks.RblCheck(args[0])
 	os.Exit(0)
 }
 

@@ -11,6 +11,7 @@ type MxStats struct {
 	Prio uint16
 }
 
+// MxLookup returns MX records with host and priority for a domain, stripping mail. prefix if present
 func MxLookup(domain string) []MxStats {
 	if strings.Contains(domain, "mail") {
 		domain = strings.Replace(domain, "mail.", "", 1)

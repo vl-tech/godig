@@ -5,6 +5,7 @@ import (
 	"net"
 )
 
+// ReverseLookup performs a PTR (reverse DNS) lookup for an IP address
 func ReverseLookup(ipAddress string) string {
 
 	ip_data, _ := net.LookupAddr(ipAddress)

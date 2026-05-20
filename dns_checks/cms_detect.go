@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// DetectCMS fetches the domain's HTML and attempts to identify the CMS from meta tags and known markup patterns
 func DetectCMS(domain string) string {
 	resp, err := http.Get("http://" + domain)
 	if err != nil {

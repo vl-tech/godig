@@ -8,6 +8,7 @@ import (
 	"github.com/fatih/color"
 )
 
+// CustomDnsResolver queries A and NS records for a domain using a user-specified DNS server
 func CustomDnsResolver(domain string, dnsServer string) {
 	y := color.New(color.FgHiGreen, color.Bold)
 	m := color.New(color.FgHiMagenta, color.Bold)

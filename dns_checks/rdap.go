@@ -42,6 +42,7 @@ var (
 	}
 )
 
+// RdapInfo fetches registration data (status, dates, registrar, nameservers) via RDAP for a domain
 func RdapInfo(domain string) error {
 	y := color.New(color.FgHiGreen, color.Bold)
 	r := color.New(color.FgRed, color.Bold)
@@ -117,6 +118,7 @@ func RdapInfo(domain string) error {
 	return nil
 }
 
+// formatDate tries multiple date formats and normalises to YYYY-MM-DD HH:MM:SS
 func formatDate(dateStr string) string {
 	for _, format := range formats {
 		t, err := time.Parse(format, dateStr)

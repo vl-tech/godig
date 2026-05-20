@@ -11,6 +11,7 @@ import (
 // 	r = color.New(color.FgHiRed, color.Bold)
 // )
 
+// SinglePortCheck tests if a specific TCP port is open on the given IP
 func SinglePortCheck(ip string, port int) {
 	address := ip + ":" + fmt.Sprintf("%d", port)
 	_, err := net.DialTimeout("tcp", address, 5e9)

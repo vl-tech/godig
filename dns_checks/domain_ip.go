@@ -13,6 +13,7 @@ func DomainResolves(domain string) bool {
 	return err == nil
 }
 
+// DomainIP returns all IPv4/IPv6 addresses for a domain
 func DomainIP(domain string) []string {
 	var ipAddresses []string
 	e := color.New(color.FgRed, color.Bold)
