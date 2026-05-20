@@ -43,6 +43,7 @@ func main() {
 	customRes      := getopt.BoolLong("dns", 'd', "Custom Dns Resolver")
 	cpanelOS       := getopt.BoolLong("cpanel-os", 'c', "List cPanel supported OS versions")
 	eolOnly        := getopt.BoolLong("eol", 0, "Show only EOL OS versions (use with --cpanel-os)")
+	txtrecord 	   := getopt.BoolLong("txt",0,"TXT Records check")
 
 	getopt.Parse()
 
@@ -71,6 +72,7 @@ func main() {
 	if *licenseCheck   { handleLicense(args) }
 	if *ptrrecordCheck { handlePTR(args) }
 	if *arecordCheck   { handleARecord(args) }
+	if *txtrecord      { handleTXTRecord(args) }
 
 	handleFullAnalysis(args)
 }
@@ -90,6 +92,23 @@ func handlePortList(args []string) {
 	fmt.Println()
 	plist := dns_checks.PortRange(args[0])
 	dns_checks.PortChecker(args[1], plist)
+	os.Exit(0)
+}
+
+func handleTXTRecord(args []string) {
+	requireArg(args, "--txt")
+	domain := dns_checks.CleanDomain(args[0])
+	_, _ = t.Println("TXT Records:")
+	y.Println(strings.Repeat("-", len("TXT Records:")))
+	records := dns_checks.TxtCheck(domain)
+	if len(records) == 0 {
+		_, _ = r.Println("No TXT records found")
+	} else {
+		for i, record := range records {
+			_, _ = d.Printf("%d. %s\n", i+1, record)
+		}
+	}
+	_, _ = y.Println()
 	os.Exit(0)
 }
 
