@@ -1,0 +1,13 @@
+# Binaries
+godig
+godig.exe
+domain_analyzer
+domain_analyzer.exe
+dig.exe
+
+# Build output
+*.out
+
+# Go workspace
+go.work
+go.work.sum

@@ -63,10 +63,7 @@ func RdapInfo(domain string) error {
 	client := &rdap.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		_, _ = r.Println(err)
-		_, _ = r.Println("Checking Whois data")
-		_, _ = y.Println("__________________")
-		// Fall back to WHOIS if RDAP fails
+		_, _ = r.Printf("RDAP lookup failed: %v\n", err)
 		return nil
 	}
 

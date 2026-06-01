@@ -1,60 +1,52 @@
 <div align="center">
   <img src="media/dig-logo-new.png" width="250">
   
-## Golang Domain DNS analyzer.
- *Multi platform script for DNS checks.*  
- *Checks A,NS,MX,TXT, and SSL validity*  
- *Accepts single parameter the domain name*
-## It has complied executables for Linux/MacOS and Windows.
+## godig — Go Domain DNS Analyzer
+ *Multi-platform CLI tool for DNS checks.*  
+ *Checks A, NS, MX, TXT, PTR, SSL, RDAP, RBL and more.*
 </div>
-- dig.exe Is the Windows execution script version
-- domain_analyzer is the Linux/MacOS binary
 
-## Examples
-Limux/MacOS
+## Build
+
 ```bash
-./domain_analyzer google.com
-```
-Windows
-```bash
-dig.exe google.com
+git clone <repo_url>
+cd godig
 ```
 
-## Build binaries locally 
-- git clone repo_url
-- cd golang-domain-analyzer
-Linux binary Size optimized
+Linux/macOS — size optimized:
 ```bash
-go build -ldflags '-w -s'
+go build -ldflags '-w -s' -o domain_analyzer
 ```
-Windows Binary arm64/arm64/i386 etc. size optimized
-```bash
-GOOS=windows GOARCH=amd64 go build -ldflags '-w -s'
-```
-Use appropriate GOARCH value for your target architecture.
-You can list all available GOARCH values [here](https://golang.org/doc/install/source#environment).
-Or if you have Go installed, run:
 
+Windows — size optimized:
+```bash
+GOOS=windows GOARCH=amd64 go build -ldflags '-w -s' -o dig.exe
+```
+
+Use the appropriate `GOARCH` for your target architecture. List all available values with:
 ```bash
 go tool dist list
 ```
-Rename Windows binary to dig.exe
+
+## Quick Examples
+
+Full domain analysis:
 ```bash
-mv domain_analyzer.exe dig.exe
+./domain_analyzer example.com
 ```
 
-## Example Usage.
-- Single port check
+Single port check:
 ```bash
 ./domain_analyzer -p 443 example.com
 ```
 
-- Default cPanel port check
+Default cPanel port scan:
 ```bash
 ./domain_analyzer -n example.com
 ```
+
 ## Usage
-```bash
+```
 Domain Analyzer - DNS Information & Security Tool
 
 USAGE:
@@ -65,7 +57,7 @@ OPTIONS:
  -a                Check A record
  -c, --cpanel-os   List cPanel supported OS versions
      --eol         Show only EOL OS versions (use with --cpanel-os)
- -d, --dns         Custom Dns Resolver
+ -d, --dns         Custom DNS resolver
  -h, --help        Show help
  -i, --ip          Get IP information
  -l, --license-check
@@ -77,7 +69,7 @@ OPTIONS:
      --ports       Port list
  -r, --rdap        Get RDAP/Whois information
      --ssl         Verify SSL certificate
-     --txt         TXT records check (includes SPF, DKIM, DMARC)
+     --txt         TXT records check (SPF, DKIM, DMARC)
  -x, --ptr         PTR record check
      --rbl         Check IP/domain against DNS blacklists (Spamhaus, Barracuda, SpamCop, SORBS)
 
@@ -120,5 +112,8 @@ EXAMPLES:
   domain_analyzer --rbl 1.2.3.4                    Check if IP 1.2.3.4 is on any blacklist
 
 NOTE:
-  You can enter either 'example.com' or 'https://example.com'.
-```
+  You can pass either 'example.com' or 'https://example.com' — the URL is parsed automatically.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
