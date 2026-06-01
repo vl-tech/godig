@@ -1,7 +1,7 @@
 package main
 
 import (
-	"domain_analyzer/dns_checks"
+	"godig/dns_checks"
 	"fmt"
 	"os"
 	"strings"
