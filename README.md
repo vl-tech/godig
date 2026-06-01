@@ -134,7 +134,9 @@ EXAMPLES:
   godig --rbl 1.2.3.4                    Check if IP 1.2.3.4 is on any blacklist
 
 ```
-[!NOTE] You can pass either 'example.com' or 'https://example.com' — the URL is parsed automatically.
+
+> [!NOTE]
+> You can pass either 'example.com' or 'https://example.com' — the URL is parsed automatically.
 
 ## License
 
