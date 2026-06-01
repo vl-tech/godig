@@ -2,6 +2,7 @@
   <img src="media/dig-logo-new.png" width="250">
   
 ## godig — Go Domain DNS Analyzer
+
  *Multi-platform CLI tool for DNS checks.*  
  *Checks A, NS, MX, TXT, PTR, SSL, RDAP, RBL and more.*
 </div>
@@ -67,6 +68,7 @@ Default cPanel port scan:
 
 ## Usage
 
+```golang
 Godig Universal diglike utility - DNS Information & Security Tool
 
 USAGE:
@@ -131,8 +133,8 @@ EXAMPLES:
   godig --rbl example.com                Check if example.com IP is on any blacklist
   godig --rbl 1.2.3.4                    Check if IP 1.2.3.4 is on any blacklist
 
-NOTE:
-  You can pass either 'example.com' or 'https://example.com' — the URL is parsed automatically.
+```
+[!NOTE] You can pass either 'example.com' or 'https://example.com' — the URL is parsed automatically.
 
 ## License
 
