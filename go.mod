@@ -1,4 +1,4 @@
-module godig
+module github.com/vl-tech/godig
 
 go 1.26.3
 

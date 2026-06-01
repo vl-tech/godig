@@ -1,7 +1,7 @@
 package main
 
 import (
-	"godig/dns_checks"
+	"github.com/vl-tech/godig/dns_checks"
 	"fmt"
 	"os"
 	"strings"
