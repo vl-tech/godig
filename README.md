@@ -6,19 +6,32 @@
  *Checks A, NS, MX, TXT, PTR, SSL, RDAP, RBL and more.*
 </div>
 
-## Build
+## Install
 
 ```bash
-git clone <repo_url>
+go install github.com/vl-tech/godig@latest
+```
+
+This installs the binary as `godig`. Requires Go 1.21+.
+
+## Build from source
+
+```bash
+git clone https://github.com/vl-tech/godig.git
 cd godig
 ```
 
-Linux/macOS — size optimized:
+Linux/macOS:
 ```bash
 go build -ldflags '-w -s' -o domain_analyzer
 ```
 
-Windows — size optimized:
+Windows (native):
+```bash
+go build -ldflags '-w -s' -o dig.exe
+```
+
+Cross-compile for Windows from Linux/macOS:
 ```bash
 GOOS=windows GOARCH=amd64 go build -ldflags '-w -s' -o dig.exe
 ```
